@@ -5,40 +5,39 @@ import '@fontsource/cormorant-garamond/latin-500.css';
 import '@fontsource/inter/latin-400.css';
 import '@fontsource/inter/latin-500.css';
 import './styles.css';
-document.documentElement.classList.add('js');
 import { initReveals, initParallax } from './motion.js';
-import { initHero, initWalk, initMaking } from './films.js';
-import { initGallery } from './gallery.js';
+import { initFilm, initMaking } from './films.js';
+import { initLightbox } from './lightbox.js';
 import { initPlan } from './plan.js';
-import { initImages, initSpecs, initConcept, initMaterials, initLight, initLocation, initStay } from './sections.js';
+import { initImages, initSpecs, initConcept, initMaterials, initLife, initLocation, initStay } from './sections.js';
 
+document.documentElement.classList.add('js');
 initImages();
-const updateHero = initHero();
+initLightbox();
+const updateFilm = initFilm();
 initSpecs();
 initConcept();
-initGallery();
 initPlan();
-initWalk();
-initMaking();
 initMaterials();
-initLight();
+initMaking();
+initLife();
 initLocation();
 initStay();
 initReveals();
 const updateParallax = initParallax();
 
-/* ---------- header: over the hero, then solid ivory ---------- */
+/* ---------- header: over the film, then solid ivory ---------- */
 const header = document.querySelector('.header');
-const hero = document.querySelector('.hero');
+const film = document.querySelector('.film');
 const headerState = () => {
-  // the ivory sheet slides over the pinned hero; the header turns solid as it arrives
-  const over = window.scrollY < hero.offsetHeight - header.offsetHeight;
+  // the page slides over the pinned film; the header turns solid as it arrives
+  const over = window.scrollY < film.offsetHeight - header.offsetHeight;
   const state = document.body.classList.contains('menu-open') ? 'menu' : over ? 'over' : 'solid';
   if (header.dataset.state !== state) header.dataset.state = state;
 };
 
 let ticking = false;
-const frame = () => { ticking = false; updateHero(); updateParallax(); headerState(); };
+const frame = () => { ticking = false; updateFilm(); updateParallax(); headerState(); };
 const request = () => { if (!ticking) { ticking = true; requestAnimationFrame(frame); } };
 window.addEventListener('scroll', request, { passive: true });
 window.addEventListener('resize', request);

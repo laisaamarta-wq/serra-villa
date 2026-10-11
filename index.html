@@ -7,6 +7,7 @@
   <meta name="description" content="Serra is a concept villa set into a green Mediterranean ridge above the sea: two long levels of travertine, a 28-metre infinity pool and a garden of old olive trees." />
   <meta name="theme-color" content="#1F1E1C" />
   <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+  <link rel="preconnect" href="https://d2ol7oe51mr4n9.cloudfront.net" crossorigin />
 </head>
 <body>
   <a class="skip-link" href="#villa">Skip to content</a>
@@ -18,7 +19,7 @@
     <nav class="header__nav" aria-label="Main">
       <a href="#villa">The villa</a>
       <a href="#plans">Plans</a>
-      <a href="#spaces">Spaces</a>
+      <a href="#materials">Materials</a>
       <a href="#making">The making</a>
       <a href="#location">Location</a>
     </nav>
@@ -33,217 +34,214 @@
       <a href="#villa">The villa</a>
       <a href="#concept">Architecture</a>
       <a href="#plans">Plans</a>
-      <a href="#spaces">Spaces</a>
-      <a href="#making">The making</a>
       <a href="#materials">Materials</a>
+      <a href="#making">The making</a>
+      <a href="#life">Life at Serra</a>
       <a href="#location">Location</a>
     </nav>
     <a class="btn btn--bronze" href="#stay">Request your stay</a>
   </div>
 
   <main id="top">
-    <!-- 1. Hero -->
-    <section class="hero" aria-label="Serra from the air">
-      <div class="hero__media">
-        <video class="hero__video" muted playsinline loop preload="metadata" aria-hidden="true"></video>
+    <!-- Opening: the walk-through film, then the aerial view it ends on -->
+    <section class="film" aria-label="A walk through Serra">
+      <div class="film__media">
+        <video class="film__walk" muted playsinline autoplay preload="auto" aria-label="A continuous walk through Serra, from the pool terrace through the rooms and out over the ridge"></video>
+        <video class="film__loop" muted playsinline loop preload="none" aria-hidden="true"></video>
       </div>
-      <div class="hero__content">
-        <p class="hero__kicker">A private villa on the Mediterranean coast</p>
-        <h1 class="hero__title">Serra</h1>
-        <p class="hero__line">A house grown from the hillside, 140 metres above the bay.</p>
+      <div class="film__content">
+        <p class="film__kicker">A private villa on the Mediterranean coast</p>
+        <h1 class="film__title">Serra</h1>
+        <p class="film__line">A house grown from the hillside, 140 metres above the bay.</p>
         <a class="btn btn--light" href="#villa">Discover the villa</a>
       </div>
-      <button class="hero__toggle" type="button" aria-pressed="false"><span class="sr-only">Pause the film</span><i></i></button>
-      <span class="hero__cue" aria-hidden="true"></span>
+      <div class="film__bar">
+        <p class="film__chapter" aria-live="off"><span class="film__num">01</span><span class="film__room">Arrival</span></p>
+        <span class="film__progress" aria-hidden="true"><i></i></span>
+        <button class="film__toggle" type="button" aria-pressed="false"><span class="sr-only">Pause the film</span><i></i></button>
+      </div>
     </section>
 
     <div class="sheet">
-      <!-- 2. Introduction and specifications -->
-      <section class="intro" id="villa">
-        <p class="label">The villa</p>
-        <h2 class="headline intro__headline" data-reveal="lines"><span>Two long levels of travertine,</span> <span>set into the ridge</span> <span>so the hill keeps its shape.</span></h2>
-        <div class="intro__text">
-          <p class="lede" data-reveal="rise">Serra follows the slope instead of fighting it. The living floor opens onto a 28-metre pool that ends at the edge of the cliff; the bedrooms sit above under a slatted oak pergola.</p>
-          <p data-reveal="rise">Every room faces the bay. Pines, limestone and wild rosemary come right up to the walls.</p>
+      <!-- 01 The villa -->
+      <section class="villa" id="villa">
+        <figure class="villa__image" data-reveal="image">
+          <img data-src="reveal" alt="Serra from the air: two long travertine levels on the ridge, with the pool at the cliff edge and the bay beyond" loading="lazy" data-parallax="0.05" />
+        </figure>
+        <div class="villa__text">
+          <p class="label"><span class="label__n">01</span>The villa</p>
+          <h2 class="headline" data-reveal="lines"><span>A house laid</span> <span>into the hillside</span></h2>
+          <p class="lede" data-reveal="rise">Two long levels of travertine follow the slope instead of levelling it, so the ridge keeps the shape it had before the house arrived.</p>
+          <p data-reveal="rise">The lower level holds the living room, the kitchen, two guest suites and a 28-metre infinity pool that ends at the edge of the cliff. The upper level, entered from the olive garden, holds the master suite, a study and a second suite under a slatted oak pergola. Every room faces the bay.</p>
+          <ol class="villa__levels">
+            <li><span>Upper level</span><span>Entrance, master suite, study, suite, pergola terrace</span></li>
+            <li><span>Lower level</span><span>Living room, kitchen and dining, two guest suites, pool terrace</span></li>
+          </ol>
         </div>
         <dl class="specs" aria-label="Key facts"></dl>
       </section>
 
-      <!-- 3. Architectural concept -->
+      <!-- 02 Architecture -->
       <section class="concept" id="concept">
-        <div class="concept__visual">
-          <figure class="concept__studio" data-reveal="image">
-            <img data-src="studio" alt="The architectural model of Serra on the studio table, with the plan projected above it" />
-            <svg class="holo" viewBox="0 0 1000 560" aria-hidden="true"></svg>
-          </figure>
+        <div class="concept__head">
+          <p class="label label--dark"><span class="label__n">02</span>Architecture</p>
+          <h2 class="headline concept__quote" data-reveal="lines"><span>The view was designed first.</span> <span>The rooms were arranged behind it.</span></h2>
         </div>
-        <div class="concept__text">
-          <p class="label label--dark">Architecture</p>
-          <h2 class="headline" data-reveal="lines"><span>Every house</span> <span>begins as a line</span></h2>
-          <p class="lede" data-reveal="rise">Serra was drawn for one ridge above the sea, and for nothing else. The view was designed first; the rooms were arranged behind it.</p>
-          <p data-reveal="rise">The plan is two long bars stepped into the hillside. The lower one holds the living floor and the pool, the upper one the master suite under a pergola of oak slats. One thin roof slab carries the line of the ridge out toward the water.</p>
-          <figure class="concept__found" data-reveal="image">
-            <img data-src="s0" alt="The empty ridge with pines and olive trees above the bay, before construction" loading="lazy" />
-            <figcaption>The ridge as it was found. The plan keeps the slope exactly as it is.</figcaption>
-          </figure>
-        </div>
+        <figure class="concept__section">
+          <svg class="section-drawing" viewBox="0 0 1200 460" role="img" aria-labelledby="section-title">
+            <title id="section-title">Schematic section through Serra: the upper level set back into the slope under a roof slab and pergola, the lower level with the pool at the cliff edge, and the bay below</title>
+          </svg>
+          <figcaption>Schematic section through the house, not to scale.</figcaption>
+        </figure>
+        <ol class="principles">
+          <li data-reveal="rise"><span class="principles__n">01</span><h3>Follow the slope</h3><p>Two long bars step down the hillside. The plan keeps the slope exactly as it was found, with pines, limestone and wild rosemary right up to the walls.</p></li>
+          <li data-reveal="rise"><span class="principles__n">02</span><h3>Face the bay</h3><p>Serra was drawn for one ridge above the sea, and for nothing else. Every room looks out over the water.</p></li>
+          <li data-reveal="rise"><span class="principles__n">03</span><h3>One line of roof</h3><p>A single thin roof slab carries the line of the ridge out toward the sea, with an oak pergola over the upper terrace.</p></li>
+        </ol>
       </section>
 
-      <!-- 4. Floor plans -->
+      <!-- 03 Plans -->
       <section class="plans" id="plans">
         <div class="plans__head">
-          <p class="label">Plans</p>
+          <p class="label"><span class="label__n">03</span>Plans</p>
           <h2 class="headline" data-reveal="lines"><span>Walk the plan</span></h2>
-          <p class="plans__hint">Choose a level, then select a room to see its area and what it holds.</p>
+          <p class="plans__hint">Choose a level, then select a room on the drawing or in the list.</p>
         </div>
         <div class="plans__body">
-          <div class="plans__stage">
+          <div class="plans__sheet">
             <div class="plans__tabs" role="tablist" aria-label="Level">
-              <button role="tab" id="tab-terrace" aria-selected="true" aria-controls="plan-panel" data-level="terrace">Terrace level</button>
-              <button role="tab" id="tab-pool" aria-selected="false" aria-controls="plan-panel" data-level="pool" tabindex="-1">Pool level</button>
+              <button role="tab" id="tab-terrace" aria-selected="true" aria-controls="plan-panel" data-level="terrace"><span>01</span>Terrace level</button>
+              <button role="tab" id="tab-pool" aria-selected="false" aria-controls="plan-panel" data-level="pool" tabindex="-1"><span>02</span>Pool level</button>
             </div>
             <div class="plans__canvas" id="plan-panel" role="tabpanel" aria-labelledby="tab-terrace">
               <svg class="plans__svg" viewBox="0 0 1000 620" role="group" aria-label="Floor plan"></svg>
               <div class="plans__zoom" role="group" aria-label="Zoom">
                 <button type="button" data-zoom="in" aria-label="Zoom in">+</button>
                 <button type="button" data-zoom="out" aria-label="Zoom out">−</button>
-                <button type="button" data-zoom="reset">Reset</button>
               </div>
               <p class="plans__scale" aria-hidden="true"><i></i>5 m</p>
             </div>
+            <div class="plans__titleblock" aria-hidden="true">
+              <span>Serra</span><span class="plans__tb-level">Terrace level</span><span class="plans__tb-sheet">Drawing 01 of 02</span>
+            </div>
           </div>
-          <aside class="plans__info" aria-live="polite">
-            <p class="plans__level"></p>
-            <h3 class="plans__room"></h3>
-            <p class="plans__area"></p>
-            <p class="plans__note"></p>
-            <figure class="plans__photo" hidden>
-              <button type="button" class="plans__photo-btn"><img alt="" /><span class="sr-only">Open photograph</span></button>
-              <figcaption></figcaption>
-            </figure>
-            <ul class="plans__list" aria-label="Rooms on this level"></ul>
+          <aside class="plans__info">
+            <div class="plans__detail" aria-live="polite">
+              <p class="plans__level"></p>
+              <h3 class="plans__room"></h3>
+              <p class="plans__area"></p>
+              <p class="plans__note"></p>
+              <figure class="plans__photo" hidden>
+                <button type="button" class="plans__photo-btn"><img alt="" /><span class="sr-only">Open photograph</span></button>
+              </figure>
+              <button type="button" class="plans__back" hidden>Back to the full plan</button>
+            </div>
+            <ol class="plans__list" aria-label="Rooms on this level"></ol>
           </aside>
         </div>
       </section>
 
-      <!-- 5. Interior and exterior -->
-      <section class="spaces" id="spaces">
-        <div class="spaces__head">
-          <p class="label label--dark">Inside and out</p>
-          <h2 class="headline" data-reveal="lines"><span>From the pool</span> <span>to the master suite</span></h2>
-          <p class="lede" data-reveal="rise">One continuous walk through the house, from the terrace to the view back over the ridge. Choose a room to go straight to it.</p>
-        </div>
-        <div class="walk">
-          <div class="walk__frame">
-            <video class="walk__video" muted playsinline preload="none" aria-label="Walk-through of Serra"></video>
-            <button class="walk__start" type="button"><svg class="walk__icon" viewBox="0 0 64 64" aria-hidden="true"><circle cx="32" cy="32" r="31"/><path d="M27 22.5 L42.5 32 L27 41.5 Z"/></svg><span>Play the walk-through</span></button>
-          </div>
-          <div class="walk__bar">
-            <button class="walk__play" type="button" aria-label="Play"><i></i></button>
-            <div class="walk__track" role="slider" tabindex="0" aria-label="Walk-through position" aria-valuemin="0" aria-valuemax="30" aria-valuenow="0"><i></i></div>
-            <span class="walk__time" aria-hidden="true">0:00</span>
-          </div>
-          <ol class="walk__chapters" aria-label="Rooms in the walk-through"></ol>
-        </div>
-        <div class="gallery"></div>
-      </section>
-
-      <!-- 6. The making of the villa -->
-      <section class="making" id="making">
-        <div class="making__head">
-          <p class="label label--dark">Construction</p>
-          <h2 class="headline" data-reveal="lines"><span>The Making</span> <span>of the Villa</span></h2>
-          <p class="lede" data-reveal="rise">From the bare ridge to the finished house in five stages. Play it through, or step from one stage to the next.</p>
-        </div>
-        <div class="making__player">
-          <div class="making__screen">
-            <div class="making__frame">
-              <video class="making__video" muted playsinline preload="metadata" aria-label="Construction of Serra, from the empty ridge to the finished villa"></video>
-            </div>
-            <div class="making__now" aria-live="polite">
-              <span class="making__num"></span>
-              <h3 class="making__name"></h3>
-              <p class="making__text"></p>
-            </div>
-          </div>
-          <div class="making__controls">
-            <button type="button" class="making__btn" data-act="prev" aria-label="Previous stage"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M13 4 L7 10 L13 16"/></svg></button>
-            <button type="button" class="making__btn making__btn--play" data-act="play" aria-label="Play"><i></i></button>
-            <button type="button" class="making__btn" data-act="next" aria-label="Next stage"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M7 4 L13 10 L7 16"/></svg></button>
-            <div class="making__timeline" aria-hidden="true"><i></i></div>
-            <button type="button" class="making__link" data-act="replay">Replay</button>
-            <button type="button" class="making__link" data-act="finish">See the finished villa</button>
-          </div>
-          <ol class="making__stages" aria-label="Construction stages"></ol>
-          <p class="making__note">A visualisation built from the architectural renderings of Serra, not footage from a building site.</p>
-        </div>
-      </section>
-
-      <!-- 7. Materials and craftsmanship -->
+      <!-- 04 Materials -->
       <section class="materials" id="materials">
         <div class="materials__head">
-          <p class="label">Materials</p>
+          <p class="label"><span class="label__n">04</span>Materials</p>
           <h2 class="headline" data-reveal="lines"><span>Four materials,</span> <span>nothing else</span></h2>
-          <p class="lede" data-reveal="rise">The same few materials run from inside to out, so the house reads as one piece of the hillside. Move across a sample to look closer.</p>
+          <p class="lede" data-reveal="rise">The same few materials run from inside to out, so the house reads as one piece of the hillside. Each is shown where it is used, with a close look at its surface.</p>
         </div>
-        <ul class="materials__grid"></ul>
+        <div class="materials__grid"></div>
       </section>
 
-      <!-- 8. Life at Serra -->
-      <section class="life" id="life">
-        <div class="life__light">
-          <div class="light__frame">
-            <img class="light__img light__img--day" data-src="day" alt="" loading="lazy" />
-            <img class="light__img light__img--gold" data-src="master" alt="Serra and its pool at golden hour" loading="lazy" />
-            <img class="light__img light__img--night" data-src="night" alt="" loading="lazy" />
-          </div>
-          <div class="light__ui">
-            <h2 class="headline headline--light" data-reveal="lines"><span>One view, all day</span></h2>
-            <p class="light__time" aria-live="polite">19:20, golden hour</p>
-            <label class="sr-only" for="light-range">Time of day</label>
-            <input id="light-range" type="range" min="0" max="100" value="50" step="0.1" />
-            <div class="light__scale" aria-hidden="true"><span>Morning</span><span>Golden hour</span><span>Blue hour</span></div>
+      <!-- 05 The making of the villa -->
+      <section class="making" id="making">
+        <div class="making__head">
+          <p class="label label--dark"><span class="label__n">05</span>Construction</p>
+          <h2 class="headline" data-reveal="lines"><span>The Making of the Villa</span></h2>
+          <p class="lede" data-reveal="rise">From the bare ridge to the finished house in five stages. The film starts on its own as you arrive; choose a stage to see it again.</p>
+        </div>
+        <div class="making__screen">
+          <video class="making__video" muted playsinline preload="metadata" aria-label="Construction of Serra, from the empty ridge to the finished villa"></video>
+          <div class="making__now" aria-live="polite">
+            <span class="making__num"></span>
+            <h3 class="making__name"></h3>
+            <p class="making__text"></p>
           </div>
         </div>
-        <div class="life__grid">
-          <div class="life__intro">
-            <p class="label">Life at Serra</p>
-            <h2 class="headline" data-reveal="lines"><span>Days that move</span> <span>with the shade</span></h2>
+        <div class="making__controls">
+          <button type="button" class="making__play" data-act="play" aria-label="Pause"><i></i></button>
+          <div class="making__timeline" aria-hidden="true"><i></i></div>
+          <button type="button" class="making__link" data-act="replay">Replay</button>
+          <button type="button" class="making__link" data-act="finish">The finished villa</button>
+        </div>
+        <ol class="making__stages" aria-label="Construction stages"></ol>
+        <p class="making__note">A visualisation built from the architectural renderings of Serra, not footage from a building site.</p>
+      </section>
+
+      <!-- 06 Life at Serra -->
+      <section class="life" id="life">
+        <div class="life__head">
+          <p class="label"><span class="label__n">06</span>Life at Serra</p>
+          <h2 class="headline" data-reveal="lines"><span>Life follows the light</span></h2>
+        </div>
+        <div class="life__stage">
+          <div class="life__frame">
+            <img class="life__img is-on" data-src="day" alt="The pool terrace in the morning" loading="lazy" />
+            <img class="life__img" data-src="master" alt="Serra and its pool at golden hour" loading="lazy" />
+            <img class="life__img" data-src="night" alt="Serra lit from within after sunset" loading="lazy" />
           </div>
-          <article class="life__item">
-            <h3>Outdoors</h3>
-            <p>The house has two outdoor rooms: the pool terrace on the living floor, and the pergola terrace above it, where the slatted oak draws moving stripes of shade from noon until sunset and the long table is laid for dinner.</p>
-          </article>
-          <article class="life__item">
+          <div class="life__panel">
+            <div class="life__tabs" role="tablist" aria-label="Time of day"></div>
+            <div class="life__copy" aria-live="polite">
+              <h3 class="life__title"></h3>
+              <p class="life__text"></p>
+            </div>
+          </div>
+        </div>
+        <div class="life__moments">
+          <figure class="life__moment" data-reveal="image-soft">
+            <img data-src="kitchen" alt="The kitchen with its travertine island and long oak table" loading="lazy" />
+            <figcaption><h3>Long lunches</h3><p>A single block of travertine for the island and an oak table for twelve, a step from the terrace.</p></figcaption>
+          </figure>
+          <figure class="life__moment" data-reveal="image-soft">
+            <img data-src="bath" alt="The stone bath framed by pines" loading="lazy" />
+            <figcaption><h3>Rest</h3><p>A tub carved from one piece of stone, set where the pines frame the water.</p></figcaption>
+          </figure>
+          <figure class="life__moment" data-reveal="image-soft">
+            <img data-src="garden" alt="Olive trees and hand-laid limestone steps in the garden" loading="lazy" />
+            <figcaption><h3>The garden</h3><p>Old olive trees kept in place during construction, with limestone steps laid by hand between them.</p></figcaption>
+          </figure>
+          <div class="life__privacy">
             <h3>Privacy</h3>
             <p>Serra sits at the end of a private road. The hill rises behind it and the pines close in on both sides, so the only open side is the one that faces the water.</p>
-          </article>
-          <article class="life__item">
-            <h3>Rest</h3>
-            <p>Every suite faces the bay. In the master suite the bed looks straight out over the water, and the stone bath is set where the pines frame the view.</p>
-          </article>
-          <article class="life__item">
-            <h3>The garden</h3>
-            <p>The old olive trees stayed where they were during construction. Limestone steps laid by hand lead between them down the slope.</p>
-          </article>
+          </div>
         </div>
       </section>
 
-      <!-- 9. Location -->
+      <!-- 07 Location -->
       <section class="location" id="location">
-        <div class="location__text">
-          <p class="label">Location</p>
-          <h2 class="headline" data-reveal="lines"><span>A ridge between</span> <span>the pines and the bay</span></h2>
-          <p class="lede" data-reveal="rise">The house sits at the end of a private road, 140 metres above the water, with the village and its harbour across the bay.</p>
-          <ul class="distances"></ul>
+        <div class="location__hero">
+          <img data-src="aerial" alt="Serra on its ridge, with the pines, the bay and the village across the water" loading="lazy" data-parallax="0.06" />
+          <div class="location__title">
+            <p class="label label--light"><span class="label__n">07</span>Location</p>
+            <h2 class="headline" data-reveal="lines"><span>A ridge between</span> <span>the pines and the bay</span></h2>
+          </div>
         </div>
-        <svg class="coast" viewBox="0 0 600 600" role="img" aria-label="Map of the bay showing Serra, the swimming cove, the village and harbour, and the marina"></svg>
+        <div class="location__body">
+          <div class="location__text">
+            <p class="lede">The house sits at the end of a private road, 140 metres above the water, with the village and its harbour across the bay.</p>
+            <ul class="places" aria-label="Places near Serra"></ul>
+          </div>
+          <figure class="map">
+            <svg class="coast" viewBox="0 0 600 600" role="group" aria-label="Illustrative map of the bay"></svg>
+            <button type="button" class="map__home">Back to Serra</button>
+            <figcaption>Illustrative map. Serra is a concept property.</figcaption>
+          </figure>
+        </div>
       </section>
 
-      <!-- 10. Stay enquiry -->
+      <!-- 08 Stay -->
       <section class="stay" id="stay">
         <div class="stay__text">
-          <p class="label label--dark">Your stay</p>
+          <p class="label label--dark"><span class="label__n">08</span>Your stay</p>
           <h2 class="headline" data-reveal="lines"><span>Request your stay</span></h2>
           <p class="lede">Tell us when you would like to come and who will be with you. We reply personally with availability and terms.</p>
           <p class="stay__concept">Serra is a concept property. This form shows how an enquiry would work; nothing you enter is sent or stored.</p>

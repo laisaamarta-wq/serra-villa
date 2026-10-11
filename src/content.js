@@ -22,15 +22,18 @@ export const MEDIA = {
   matOak: u('bdf89346-3571-45e6-9bae-a3b3e54fdadd'),
   matLinen: u('bb614efd-c32a-4c80-9f06-6d25fec29c95'),
   matWater: u('5c89cba5-1b82-4d3e-9c89-64c2a016a891'),
+  // the wide aerial frame the opening film ends on, reused for the location section
+  aerial: u('4cc25c34-2537-4b89-b083-2a4d61f2722f', 'jpg'),
   hero: {
     desktop: u('469f8d69-ebc6-4c69-919e-525342a976f7', 'mp4'),
     mobile: u('3ba65265-8fa1-4348-b116-b54d95fdc576', 'mp4'),
     poster: u('4cc25c34-2537-4b89-b083-2a4d61f2722f', 'jpg'),
     posterMobile: u('9673ec20-6339-4635-8596-275e7d23ce53', 'jpg'),
   },
+  // the walk-through film opens the site; the aerial loop continues from its last frame
   walk: {
-    desktop: u('1e15b776-b73a-4e7f-9526-c746dd1a89b8', 'mp4'),
-    mobile: u('00080901-ae94-4a56-a8d2-d06b0b0c1480', 'mp4'),
+    desktop: u('9afc9a2d-b6c3-43de-8f72-3c5a18c5434c', 'mp4'),
+    mobile: u('cd8ce0ee-2bfc-41ab-8ed5-895688b40a3b', 'mp4'),
   },
   making: {
     desktop: u('920dc112-7ef9-471c-9f51-fd7cbc8b81c8', 'mp4'),
@@ -69,29 +72,38 @@ export const MAKING = [
   { t: 20.1, name: 'The Residence', text: 'The pool fills to its edge, the garden is planted around the old olive trees, and the house meets its first golden hour.' },
 ];
 
-// Gallery, in reading order. `room` links a photograph to a room on the plan.
-export const GALLERY = [
-  { key: 'living', name: 'Living room', room: 'living', text: 'Ninety square metres under one thin concrete roof, with a linear fireplace set into the travertine wall. Both glass walls slide away into the stone.' },
-  { key: 'kitchen', name: 'Kitchen and dining', room: 'kitchen', text: 'A single block of travertine for the island and a long oak table for twelve, a step from the terrace.' },
-  { key: 'bedroom', name: 'Master suite', room: 'master', text: 'The bed faces the bay, so the last light of the day arrives through the olive branches and the linen curtain.' },
-  { key: 'bath', name: 'Bath', room: 'masterbath', text: 'A tub carved from one piece of stone, set where the pines frame the water.' },
-  { key: 'pergola', name: 'Pergola terrace', room: 'pergola', text: 'Slatted oak overhead draws moving stripes of shade across the floor from noon until sunset.' },
-  { key: 'garden', name: 'Garden', text: 'Old olive trees kept in place during construction, with limestone steps laid by hand between them.' },
-  { key: 'day', name: 'Pool terrace', room: 'poolterrace', text: 'A travertine terrace with loungers and the 28-metre infinity pool at the edge of the cliff.' },
-];
+// Photographs linked to rooms on the plan (keys of MEDIA).
+export const ROOM_PHOTOS = {
+  living: { key: 'living', name: 'Living room' },
+  kitchen: { key: 'kitchen', name: 'Kitchen and dining' },
+  master: { key: 'bedroom', name: 'Master suite' },
+  masterbath: { key: 'bath', name: 'Bath' },
+  pergola: { key: 'pergola', name: 'Pergola terrace' },
+  poolterrace: { key: 'day', name: 'Pool terrace' },
+};
 
+// Materials shown where they are used (`context`), with a close-up sample (`key`).
 export const MATERIALS = [
-  { key: 'matTravertine', name: 'Travertine', text: 'Honed, never polished. Floors, walls and the pool edge are cut from the same quarry.' },
-  { key: 'matOak', name: 'Oak', text: 'Oiled by hand for the pergola, the doors and the kitchen. It greys softly in the sun.' },
-  { key: 'matLinen', name: 'Linen', text: 'Washed linen on every sofa and curtain, so the house stays cool in August.' },
-  { key: 'matWater', name: 'Water', text: 'A 28-metre edge that spills over the stone and seems to run into the bay.' },
+  { key: 'matTravertine', context: 'living', name: 'Travertine', where: 'Living room wall and floor', text: 'Honed, never polished. Floors, walls and the pool edge are cut from the same quarry, so the stone runs unbroken from the living room to the water.' },
+  { key: 'matOak', context: 'pergola', name: 'Oak', where: 'Pergola and terrace', text: 'Oiled by hand for the pergola, the doors and the kitchen. It greys softly in the sun.' },
+  { key: 'matLinen', context: 'bedroom', name: 'Linen', where: 'Master suite', text: 'Washed linen on every sofa and curtain, so the house stays cool in August.' },
+  { key: 'matWater', context: 'day', name: 'Water', where: 'Pool terrace', text: 'A 28-metre edge that spills over the stone and seems to run into the bay.' },
 ];
 
-export const DISTANCES = [
-  { place: 'Swimming cove', how: '600 m on a stone path' },
-  { place: 'Village and harbour', how: '1.2 km, ten minutes by bicycle' },
-  { place: 'Marina', how: '2.5 km' },
-  { place: 'International airport', how: '45 minutes by car' },
+// Time of day: each state switches the photograph and the text.
+export const LIGHT = [
+  { key: 'day', name: 'Morning', title: 'The pool terrace first', text: 'The day starts on the lower terrace, beside the 28-metre pool, with the living room open behind on two sides.' },
+  { key: 'master', name: 'Golden hour', title: 'The hour it was drawn for', text: 'The low sun runs the length of the pool, and the slatted oak of the pergola draws long stripes of shade across the upper terrace.' },
+  { key: 'night', name: 'Blue hour', title: 'Lit from within', text: 'After sunset the travertine keeps the warmth of the day, and the glass walls turn the house into a lantern on the ridge.' },
+];
+
+// Places on the illustrative map. Coordinates are in the 600 × 600 map drawing; `at: null` is off the map.
+export const PLACES = [
+  { id: 'serra', place: 'Serra', how: 'At the end of a private road, 140 m above the water', at: [298, 342] },
+  { id: 'cove', place: 'Swimming cove', how: '600 m on a stone path', at: [176, 436] },
+  { id: 'village', place: 'Village and harbour', how: '1.2 km, ten minutes by bicycle', at: [522, 262] },
+  { id: 'marina', place: 'Marina', how: '2.5 km', at: [560, 246] },
+  { id: 'airport', place: 'International airport', how: '45 minutes by car', at: null },
 ];
 
 // Floor plan, drawn at 28 units per metre; areas are computed from the geometry.

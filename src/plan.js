@@ -1,6 +1,6 @@
-import { PLAN, GALLERY, MEDIA } from './content.js';
+import { PLAN, ROOM_PHOTOS, MEDIA } from './content.js';
 import { onceVisible, reducedMotion } from './motion.js';
-import { openLightbox } from './gallery.js';
+import { openLightbox } from './lightbox.js';
 
 const UNITS_PER_M = 28;
 const W = 1000; const H = 620;
@@ -40,15 +40,21 @@ function drawLevel(key) {
   const th = svgEl('text', { x: xr + 12, y: (minY + maxY) / 2, class: 'dimtext' }); th.textContent = `${hM} m`; lines.appendChild(th);
   g.appendChild(lines);
   // rooms: interactive regions follow the drawn walls exactly
-  L.rooms.forEach((r) => {
+  L.rooms.forEach((r, i) => {
     const room = svgEl('rect', {
       x: r.x, y: r.y, width: r.w, height: r.h, class: 'room' + (r.outdoor ? ' is-outdoor' : ''),
       tabindex: 0, role: 'button', 'aria-pressed': 'false', 'data-room': r.id,
-      'aria-label': `${r.name}, ${area(r)} square metres`,
+      'aria-label': `${String(i + 1).padStart(2, '0')}, ${r.name}, ${area(r)} square metres`,
     });
     g.appendChild(room);
-    const lx = r.x + 14; const ly = r.y + 28;
-    const t = svgEl('text', { x: lx, y: ly, class: 'rlabel' });
+    // room number in a small circle, name and area beneath it
+    const badge = svgEl('g', { class: 'badge', 'data-room': r.id, 'aria-hidden': 'true' });
+    badge.appendChild(svgEl('circle', { cx: r.x + 24, cy: r.y + 24, r: 12 }));
+    const n = svgEl('text', { x: r.x + 24, y: r.y + 28.5, 'text-anchor': 'middle' }); n.textContent = String(i + 1).padStart(2, '0');
+    badge.appendChild(n);
+    g.appendChild(badge);
+    const lx = r.x + 12; const ly = r.y + 58;
+    const t = svgEl('text', { x: lx, y: ly, class: 'rlabel', 'aria-hidden': 'true' });
     t.innerHTML = `<tspan>${r.name}</tspan><tspan class="a" x="${lx}" dy="1.3em">${area(r)} m²</tspan>`;
     g.appendChild(t);
   });
@@ -64,8 +70,10 @@ export function initPlan() {
   const el = {
     level: info.querySelector('.plans__level'), room: info.querySelector('.plans__room'), area: info.querySelector('.plans__area'),
     note: info.querySelector('.plans__note'), photo: info.querySelector('.plans__photo'), list: info.querySelector('.plans__list'),
+    detail: info.querySelector('.plans__detail'), back: info.querySelector('.plans__back'),
+    tbLevel: section.querySelector('.plans__tb-level'), tbSheet: section.querySelector('.plans__tb-sheet'),
   };
-  const photoImg = el.photo.querySelector('img'); const photoCap = el.photo.querySelector('figcaption');
+  const photoImg = el.photo.querySelector('img');
   const scaleBar = section.querySelector('.plans__scale i');
 
   const levels = { terrace: drawLevel('terrace'), pool: drawLevel('pool') };
@@ -100,9 +108,7 @@ export function initPlan() {
     anim = requestAnimationFrame(step);
   };
   section.querySelectorAll('[data-zoom]').forEach((b) => b.addEventListener('click', () => {
-    const z = b.dataset.zoom;
-    if (z === 'reset') animateTo(1, W / 2, H / 2);
-    else animateTo(view.s * (z === 'in' ? 1.5 : 1 / 1.5), view.cx, view.cy);
+    animateTo(view.s * (b.dataset.zoom === 'in' ? 1.5 : 1 / 1.5), view.cx, view.cy);
   }));
 
   // drag to pan when zoomed (mouse, pen and touch)
@@ -124,35 +130,38 @@ export function initPlan() {
   svg.addEventListener('pointerup', endDrag); svg.addEventListener('pointercancel', endDrag);
 
   // ---------- information panel ----------
-  const roomPhoto = (id) => GALLERY.findIndex((g) => g.room === id);
   const showLevelInfo = () => {
     const L = PLAN[level];
-    el.level.textContent = level === 'terrace' ? 'Upper floor' : 'Lower floor';
-    el.room.textContent = L.title; el.area.textContent = '';
-    el.note.textContent = L.summary; el.photo.hidden = true;
+    el.level.textContent = level === 'terrace' ? 'Upper level' : 'Lower level';
+    el.room.textContent = L.title;
+    el.area.textContent = `${L.rooms.length} spaces on this level`;
+    el.note.textContent = L.summary; el.photo.hidden = true; el.back.hidden = true;
   };
+  const swap = () => { el.detail.classList.remove('is-swap'); void el.detail.offsetWidth; el.detail.classList.add('is-swap'); };
   const select = (id, { focusPlan = false } = {}) => {
     const L = PLAN[level];
     const r = L.rooms.find((x) => x.id === id);
     selected = r ? id : null;
-    svg.querySelectorAll('.room').forEach((n) => { const on = n.dataset.room === selected; n.classList.toggle('is-selected', on); n.setAttribute('aria-pressed', String(on)); });
+    svg.querySelectorAll('.room, .badge').forEach((n) => { const on = n.dataset.room === selected; n.classList.toggle('is-selected', on); if (n.classList.contains('room')) n.setAttribute('aria-pressed', String(on)); });
+    svg.classList.toggle('has-selection', !!selected);
     el.list.querySelectorAll('button').forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.room === selected)));
-    if (!r) { showLevelInfo(); return; }
-    info.classList.remove('is-swap'); void info.offsetWidth; info.classList.add('is-swap');
-    el.level.textContent = L.title;
+    swap();
+    if (!r) { showLevelInfo(); if (focusPlan) animateTo(1, W / 2, H / 2); return; }
+    const i = L.rooms.indexOf(r);
+    el.level.textContent = `${String(i + 1).padStart(2, '0')}  ${L.title}`;
     el.room.textContent = r.name;
     el.area.textContent = `${area(r)} m²${r.outdoor ? ', outdoors' : ''}`;
     el.note.textContent = r.text;
-    const gi = roomPhoto(r.id);
-    if (gi >= 0) {
-      const g = GALLERY[gi];
-      photoImg.src = MEDIA[g.key]; photoImg.alt = g.name;
-      photoCap.textContent = g.name;
-      el.photo.dataset.index = gi; el.photo.hidden = false;
-    } else el.photo.hidden = true;
-    if (focusPlan && view.s > 1.01) animateTo(view.s, r.x + r.w / 2, r.y + r.h / 2);
+    const ph = ROOM_PHOTOS[r.id];
+    if (ph) { photoImg.src = MEDIA[ph.key]; photoImg.alt = ph.name; el.photo.hidden = false; } else el.photo.hidden = true;
+    el.back.hidden = false;
+    if (focusPlan) animateTo(Math.max(view.s, 1.35), r.x + r.w / 2, r.y + r.h / 2);
   };
-  el.photo.querySelector('button').addEventListener('click', () => openLightbox(+el.photo.dataset.index));
+  el.photo.querySelector('button').addEventListener('click', () => {
+    const ph = ROOM_PHOTOS[selected]; const r = PLAN[level].rooms.find((x) => x.id === selected);
+    if (ph) openLightbox([{ src: MEDIA[ph.key], name: ph.name, text: r ? r.text : '' }]);
+  });
+  el.back.addEventListener('click', () => { select(null, { focusPlan: true }); });
 
   svg.addEventListener('click', (e) => {
     if (drag && drag.moved) return;
@@ -165,7 +174,7 @@ export function initPlan() {
   });
 
   const fillList = () => {
-    el.list.innerHTML = PLAN[level].rooms.map((r) => `<li><button type="button" data-room="${r.id}" aria-pressed="false"><span>${r.name}</span><span>${area(r)} m²</span></button></li>`).join('');
+    el.list.innerHTML = PLAN[level].rooms.map((r, i) => `<li><button type="button" data-room="${r.id}" aria-pressed="false"><span class="n">${String(i + 1).padStart(2, '0')}</span><span>${r.name}</span><span>${area(r)} m²</span></button></li>`).join('');
     el.list.querySelectorAll('button').forEach((b) => b.addEventListener('click', () => select(b.dataset.room, { focusPlan: true })));
   };
 
@@ -183,7 +192,11 @@ export function initPlan() {
     g.classList.remove('draw-in');
     requestAnimationFrame(() => requestAnimationFrame(() => g.classList.add('draw-in')));
     selected = null;
-    fillList(); showLevelInfo();
+    svg.classList.remove('has-selection');
+    svg.querySelectorAll('.is-selected').forEach((n) => n.classList.remove('is-selected'));
+    el.tbLevel.textContent = PLAN[key].title;
+    el.tbSheet.textContent = `Drawing ${key === 'terrace' ? '01' : '02'} of 02`;
+    fillList(); swap(); showLevelInfo();
     animateTo(1, W / 2, H / 2);
   };
   tabs.forEach((t, i) => {
