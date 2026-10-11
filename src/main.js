@@ -1,76 +1,48 @@
-import '@fontsource/bodoni-moda/latin-400.css';
-import '@fontsource/bodoni-moda/latin-400-italic.css';
-import '@fontsource/manrope/latin-400.css';
-import '@fontsource/manrope/latin-500.css';
+import '@fontsource/cormorant-garamond/latin-300.css';
+import '@fontsource/cormorant-garamond/latin-400.css';
+import '@fontsource/cormorant-garamond/latin-400-italic.css';
+import '@fontsource/cormorant-garamond/latin-500.css';
+import '@fontsource/inter/latin-400.css';
+import '@fontsource/inter/latin-500.css';
 import './styles.css';
-import Lenis from 'lenis';
-import { MEDIA } from './content.js';
-import { initJourney } from './journey.js';
-import { initPlan, initSpaces, initLight, initMaterials, initLocation, initForm } from './sections.js';
+document.documentElement.classList.add('js');
+import { initReveals, initParallax } from './motion.js';
+import { initHero, initWalk, initMaking } from './films.js';
+import { initGallery } from './gallery.js';
+import { initPlan } from './plan.js';
+import { initImages, initSpecs, initConcept, initMaterials, initLight, initLocation, initStay } from './sections.js';
 
-const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-const isPhone = window.matchMedia('(max-width: 640px)').matches;
-const root = document.documentElement;
-if (reduced) root.classList.add('is-static');
-
-/* ---------- loader: waits for the first frames the visitor will see ---------- */
-const loader = document.querySelector('.loader');
-const count = loader.querySelector('.loader__count');
-const ridge = loader.querySelector('.loader__ridge');
-const essentials = [MEDIA.studio, MEDIA.s0, MEDIA.master];
-let done = 0;
-const setLoad = (f) => { ridge.style.setProperty('--draw', String(1 - f)); count.textContent = String(Math.round(f * 100)); };
-const finish = () => { setLoad(1); setTimeout(() => root.classList.add('is-loaded'), 350); };
-setLoad(0);
-Promise.all(essentials.map((src) => new Promise((res) => {
-  const im = new Image(); im.onload = im.onerror = () => { done++; setLoad(done / essentials.length * 0.95); res(); }; im.src = src;
-}))).then(finish);
-setTimeout(finish, 7000); // never hold the page hostage
-
-/* ---------- journey + sections ---------- */
-const journey = initJourney({ isStatic: reduced, isPhone });
+initImages();
+const updateHero = initHero();
+initSpecs();
+initConcept();
+initGallery();
 initPlan();
-const updateSpaces = initSpaces();
-initLight({ reduced });
+initWalk();
+initMaking();
 initMaterials();
+initLight();
 initLocation();
-initForm();
+initStay();
+initReveals();
+const updateParallax = initParallax();
 
-/* ---------- header: glass over the journey, solid afterwards ---------- */
+/* ---------- header: over the hero, then solid ivory ---------- */
 const header = document.querySelector('.header');
+const hero = document.querySelector('.hero');
 const headerState = () => {
-  const end = journey.section ? journey.section.getBoundingClientRect().bottom : 0;
-  const solid = reduced || document.body.classList.contains('menu-open') || end <= header.offsetHeight;
-  header.dataset.state = solid ? 'solid' : 'glass';
+  // the ivory sheet slides over the pinned hero; the header turns solid as it arrives
+  const over = window.scrollY < hero.offsetHeight - header.offsetHeight;
+  const state = document.body.classList.contains('menu-open') ? 'menu' : over ? 'over' : 'solid';
+  if (header.dataset.state !== state) header.dataset.state = state;
 };
 
-/* ---------- smooth scroll ---------- */
-let lenis = null;
-if (!reduced) {
-  lenis = new Lenis({ lerp: 0.1, wheelMultiplier: 0.9, touchMultiplier: 1.4 });
-}
-const frame = (time) => {
-  if (lenis) lenis.raf(time);
-  journey.update();
-  updateSpaces();
-  headerState();
-  requestAnimationFrame(frame);
-};
-requestAnimationFrame(frame);
-
-/* in-page links go through Lenis so the journey stays in sync */
-document.addEventListener('click', (e) => {
-  const a = e.target.closest('a[href^="#"]');
-  if (!a) return;
-  const id = a.getAttribute('href');
-  const target = id === '#top' ? 0 : document.querySelector(id);
-  if (target === null) return;
-  e.preventDefault();
-  closeMenu();
-  if (lenis) lenis.scrollTo(target, { offset: id === '#top' ? 0 : -header.offsetHeight - 8, duration: 1.4 });
-  else window.scrollTo({ top: target === 0 ? 0 : target.getBoundingClientRect().top + scrollY - header.offsetHeight - 8 });
-  if (target && target.focus) { target.setAttribute('tabindex', '-1'); target.focus({ preventScroll: true }); }
-});
+let ticking = false;
+const frame = () => { ticking = false; updateHero(); updateParallax(); headerState(); };
+const request = () => { if (!ticking) { ticking = true; requestAnimationFrame(frame); } };
+window.addEventListener('scroll', request, { passive: true });
+window.addEventListener('resize', request);
+frame();
 
 /* ---------- mobile menu ---------- */
 const menu = document.getElementById('menu');
@@ -78,20 +50,20 @@ const burger = document.querySelector('.header__menu');
 function openMenu() {
   menu.hidden = false; burger.setAttribute('aria-expanded', 'true');
   burger.querySelector('.sr-only').textContent = 'Close menu';
-  document.body.classList.add('menu-open'); document.body.style.overflow = 'hidden';
-  if (lenis) lenis.stop();
+  document.body.classList.add('menu-open'); document.documentElement.classList.add('is-locked');
+  headerState();
   menu.querySelector('a').focus();
 }
-function closeMenu() {
+function closeMenu({ restoreFocus = true } = {}) {
   if (menu.hidden) return;
   menu.hidden = true; burger.setAttribute('aria-expanded', 'false');
   burger.querySelector('.sr-only').textContent = 'Open menu';
-  document.body.classList.remove('menu-open'); document.body.style.overflow = '';
-  if (lenis) lenis.start();
-  burger.focus();
+  document.body.classList.remove('menu-open'); document.documentElement.classList.remove('is-locked');
+  headerState();
+  if (restoreFocus) burger.focus();
 }
 burger.addEventListener('click', () => (menu.hidden ? openMenu() : closeMenu()));
-menu.querySelector('.menu__close').addEventListener('click', closeMenu);
+menu.addEventListener('click', (e) => { if (e.target.closest('a')) closeMenu({ restoreFocus: false }); });
 document.addEventListener('keydown', (e) => {
   if (menu.hidden) return;
   if (e.key === 'Escape') closeMenu();
@@ -102,4 +74,4 @@ document.addEventListener('keydown', (e) => {
     else if (!e.shiftKey && i === f.length - 1) { e.preventDefault(); f[0].focus(); }
   }
 });
-window.matchMedia('(max-width: 960px)').addEventListener('change', (m) => { if (!m.matches) closeMenu(); });
+window.matchMedia('(max-width: 960px)').addEventListener('change', (m) => { if (!m.matches) closeMenu({ restoreFocus: false }); });

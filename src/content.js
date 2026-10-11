@@ -1,5 +1,6 @@
-// All editable content for the SERRA site lives here: media, journey timing, copy.
-// Media are hosted on the Higgsfield CDN (CORS-enabled). Replace URLs to self-host.
+// All editable content for the SERRA site: media, copy and verified property facts.
+// Serra is a concept property. Every fact below comes from the original concept;
+// nothing here is a real listing, price or availability.
 
 const CDN = 'https://d2ol7oe51mr4n9.cloudfront.net/user_3C15E03naKYn0k12cqxNShlIybX/';
 const u = (id, ext = 'webp') => `${CDN}${id}.${ext}`;
@@ -7,10 +8,6 @@ const u = (id, ext = 'webp') => `${CDN}${id}.${ext}`;
 export const MEDIA = {
   studio: u('bf9f0e23-8548-4397-a428-56177eadcd2e'),
   s0: u('7ca677f9-9440-41aa-9110-d000e28f54b5'),
-  wireLines: u('9740928f-bc0a-4751-baa4-f49f7b9fbc96'),
-  s1: u('b7728d62-6957-4d88-9520-d231ef13f790'),
-  s2: u('3587778f-df1b-4c9a-8355-33ff501e60f3'),
-  s3: u('124abd6b-da95-4ec3-8ba0-2db4dbc08850'),
   master: u('9113bcd8-9a90-4603-8253-56ce21bc4680'),
   reveal: u('40171492-a905-444f-ba96-ea2d01777131'),
   day: u('a7f5d3c7-352e-452c-9df5-d9f56f33d32c'),
@@ -25,71 +22,62 @@ export const MEDIA = {
   matOak: u('bdf89346-3571-45e6-9bae-a3b3e54fdadd'),
   matLinen: u('bb614efd-c32a-4c80-9f06-6d25fec29c95'),
   matWater: u('5c89cba5-1b82-4d3e-9c89-64c2a016a891'),
-  film: {
-    desktop: u('1e15b776-b73a-4e7f-9526-c746dd1a89b8', 'mp4'), // 1600×900, keyframe every 8 frames
-    mobile: u('00080901-ae94-4a56-a8d2-d06b0b0c1480', 'mp4'), // 1280×720
-    duration: 30.0,
+  hero: {
+    desktop: u('469f8d69-ebc6-4c69-919e-525342a976f7', 'mp4'),
+    mobile: u('3ba65265-8fa1-4348-b116-b54d95fdc576', 'mp4'),
+    poster: u('4cc25c34-2537-4b89-b083-2a4d61f2722f', 'jpg'),
+    posterMobile: u('9673ec20-6339-4635-8596-275e7d23ce53', 'jpg'),
+  },
+  walk: {
+    desktop: u('1e15b776-b73a-4e7f-9526-c746dd1a89b8', 'mp4'),
+    mobile: u('00080901-ae94-4a56-a8d2-d06b0b0c1480', 'mp4'),
+  },
+  making: {
+    desktop: u('920dc112-7ef9-471c-9f51-fd7cbc8b81c8', 'mp4'),
+    mobile: u('19390fa8-7b31-4fff-8e08-85b3e9579868', 'mp4'),
   },
 };
 
-/*
-  The journey is one pinned stage. Distances are in viewport heights (vh units of scroll).
-  Each beat maps its own scroll interval to its own visual interval.
-  - studio: 0..1 draws the hologram plan over the studio photo
-  - zoom: pushes into the hologram and dissolves to the empty site
-  - build: `from`/`to` are stage indices (0 = empty slope … 5 = finished villa)
-  - film: `from`/`to` are seconds of the fly-through video; a hold has from === to
-  `focus` is the horizontal crop focus on portrait screens (0 left … 1 right).
-  `mvh` optionally overrides the distance on phones.
-*/
-export const BEATS = [
-  { id: 'studio', type: 'studio', vh: 1.3, mvh: 1.0 },
-  { id: 'zoom', type: 'zoom', vh: 0.8, mvh: 0.6 },
-  { id: 'site', type: 'build', from: 0, to: 0, vh: 0.6, mvh: 0.4 },
-  { id: 'line', type: 'build', from: 0, to: 1, vh: 0.8, mvh: 0.6 },
-  { id: 'foundation', type: 'build', from: 1, to: 2, vh: 0.8, mvh: 0.6 },
-  { id: 'structure', type: 'build', from: 2, to: 3, vh: 0.8, mvh: 0.6 },
-  { id: 'stone', type: 'build', from: 3, to: 4, vh: 0.8, mvh: 0.6 },
-  { id: 'water', type: 'build', from: 4, to: 5, vh: 0.8, mvh: 0.6 },
-  { id: 'finished', type: 'film', from: 0, to: 0, vh: 0.9, mvh: 0.6, focus: 0.42 },
-  { id: 'dive', type: 'film', from: 0, to: 3.0, vh: 1.0, mvh: 0.8, focus: 0.45 },
-  { id: 'pool', type: 'film', from: 3.0, to: 6.0, vh: 1.1, mvh: 0.9, focus: 0.5 },
-  { id: 'living', type: 'film', from: 6.0, to: 9.5, vh: 1.8, mvh: 1.3, focus: 0.45 },
-  { id: 'kitchen', type: 'film', from: 9.5, to: 13.0, vh: 1.8, mvh: 1.3, focus: 0.4 },
-  { id: 'stairs', type: 'film', from: 13.0, to: 16.6, vh: 1.2, mvh: 0.9, focus: 0.35 },
-  { id: 'bedroom', type: 'film', from: 16.6, to: 21.0, vh: 1.8, mvh: 1.3, focus: 0.45 },
-  { id: 'pergola', type: 'film', from: 21.0, to: 24.6, vh: 1.3, mvh: 1.0, focus: 0.45 },
-  { id: 'turn', type: 'film', from: 24.6, to: 26.6, vh: 0.9, mvh: 0.7, focus: 0.5 },
-  { id: 'reveal', type: 'film', from: 26.6, to: 30.0, vh: 1.8, mvh: 1.3, focus: 0.55 },
-  { id: 'end', type: 'film', from: 30.0, to: 30.0, vh: 0.8, mvh: 0.5, focus: 0.55 },
+// Verified concept facts. `count` animates once; `suffix` is set in smaller type.
+export const SPECS = [
+  { label: 'Interior', count: 420, suffix: 'm²' },
+  { label: 'Suites', count: 4 }, // as drawn on the plan: master suite, suite, two guest suites
+  { label: 'Levels', count: 2 },
+  { label: 'Infinity pool', count: 28, suffix: 'm' },
+  { label: 'Garden', count: 3800, suffix: 'm²', group: true },
+  { label: 'Above the sea', count: 140, suffix: 'm' },
 ];
 
-// Copy chapters: shown while the scroll is between the start of `from` beat and the end of `to` beat.
-export const CHAPTERS = [
-  { from: 'studio', to: 'studio', place: 'center', title: ['Every house', 'begins as a line'], body: 'Serra was drawn for one ridge above the sea, and for nothing else.' },
-  { from: 'site', to: 'site', place: 'left', title: ['A ridge above', 'the bay'], body: 'Pines, limestone and wild rosemary. The plan keeps the slope exactly as it was found.' },
-  { from: 'finished', to: 'dive', place: 'left', title: ['Serra'], body: 'A house grown from the hillside.', cta: { label: 'Request a viewing', href: '#viewing' }, hero: true },
-  { from: 'living', to: 'living', place: 'right', title: ['Space follows', 'the light'], body: 'The living floor opens on two sides, so the room is never far from the water.' },
-  { from: 'kitchen', to: 'kitchen', place: 'left', title: ['A table', 'for twelve'], body: 'A step from the pool. One block of travertine for the island, oak for everything the hands touch.' },
-  { from: 'bedroom', to: 'bedroom', place: 'right', title: ['Evenings end', 'over the bay'], body: 'The master suite faces the sunset, behind one sliding wall of glass.' },
-  { from: 'reveal', to: 'end', place: 'left', title: ['The view was', 'designed first'], body: '420 m² on two levels, five suites, a 28-metre pool at the edge of the cliff.', cta: { label: 'Explore the house', href: '#house' } },
+// Walk-through film chapters (seconds in the 30 s film).
+export const WALK = [
+  { t: 0, name: 'Arrival' },
+  { t: 3, name: 'Pool terrace' },
+  { t: 6, name: 'Living room' },
+  { t: 9.5, name: 'Kitchen' },
+  { t: 13, name: 'The stair' },
+  { t: 16.6, name: 'Master suite' },
+  { t: 21, name: 'Pergola' },
+  { t: 24.6, name: 'The view' },
 ];
 
-export const STAGES = [
-  { beat: 'line', name: 'The line' },
-  { beat: 'foundation', name: 'Foundation' },
-  { beat: 'structure', name: 'Structure' },
-  { beat: 'stone', name: 'Stone and glass' },
-  { beat: 'water', name: 'Water and garden' },
+// Construction visualisation: stage `t` is the moment in the 20 s film where the stage is complete.
+export const MAKING = [
+  { t: 0, name: 'The Ground', text: 'The ridge as it was found: pines, limestone and wild rosemary above the bay. The plan keeps the slope exactly as it is.' },
+  { t: 5, name: 'The Foundation', text: 'Terraces are cut into the hillside and the foundations follow its contours, so the house sits in the slope rather than on it.' },
+  { t: 10, name: 'The Structure', text: 'Two long concrete levels rise under one thin roof slab, reaching toward the view.' },
+  { t: 15, name: 'The Craft', text: 'Honed travertine is laid on the walls and floors, and wide panes of glass are set into every opening that faces the bay.' },
+  { t: 20.1, name: 'The Residence', text: 'The pool fills to its edge, the garden is planted around the old olive trees, and the house meets its first golden hour.' },
 ];
 
-export const SPACES = [
-  { key: 'living', name: 'Living room', text: 'Ninety square metres under one thin concrete roof, with a linear fireplace set into the travertine wall. Both glass walls slide away into the stone.' },
-  { key: 'kitchen', name: 'Kitchen and dining', text: 'A single block of travertine for the island and a long oak table for twelve, a step from the terrace.' },
-  { key: 'pergola', name: 'Pergola terrace', text: 'Slatted oak overhead draws moving stripes of shade across the floor from noon until sunset.' },
-  { key: 'bedroom', name: 'Master suite', text: 'The bed faces the bay, so the last light of the day arrives through the olive branches and the linen curtain.' },
-  { key: 'bath', name: 'Bath', text: 'A tub carved from one piece of stone, set where the pines frame the water.' },
+// Gallery, in reading order. `room` links a photograph to a room on the plan.
+export const GALLERY = [
+  { key: 'living', name: 'Living room', room: 'living', text: 'Ninety square metres under one thin concrete roof, with a linear fireplace set into the travertine wall. Both glass walls slide away into the stone.' },
+  { key: 'kitchen', name: 'Kitchen and dining', room: 'kitchen', text: 'A single block of travertine for the island and a long oak table for twelve, a step from the terrace.' },
+  { key: 'bedroom', name: 'Master suite', room: 'master', text: 'The bed faces the bay, so the last light of the day arrives through the olive branches and the linen curtain.' },
+  { key: 'bath', name: 'Bath', room: 'masterbath', text: 'A tub carved from one piece of stone, set where the pines frame the water.' },
+  { key: 'pergola', name: 'Pergola terrace', room: 'pergola', text: 'Slatted oak overhead draws moving stripes of shade across the floor from noon until sunset.' },
   { key: 'garden', name: 'Garden', text: 'Old olive trees kept in place during construction, with limestone steps laid by hand between them.' },
+  { key: 'day', name: 'Pool terrace', room: 'poolterrace', text: 'A travertine terrace with loungers and the 28-metre infinity pool at the edge of the cliff.' },
 ];
 
 export const MATERIALS = [
@@ -106,11 +94,11 @@ export const DISTANCES = [
   { place: 'International airport', how: '45 minutes by car' },
 ];
 
-// Floor plan. Coordinates in a 1000 × 620 drawing at 28 units per metre; areas are computed from the geometry.
+// Floor plan, drawn at 28 units per metre; areas are computed from the geometry.
 export const PLAN = {
   terrace: {
     title: 'Terrace level',
-    summary: 'Entrance from the hill, master suite and the pergola terrace',
+    summary: 'Entrance from the hill, the master suite and the pergola terrace.',
     rooms: [
       { id: 'entry', name: 'Entrance hall', x: 120, y: 140, w: 140, h: 220, text: 'The door opens from the olive garden straight onto the view, with a stair down to the living floor.' },
       { id: 'study', name: 'Study', x: 260, y: 140, w: 120, h: 110, text: 'A quiet room on the hill side, lit from a high strip window.' },
@@ -122,7 +110,7 @@ export const PLAN = {
   },
   pool: {
     title: 'Pool level',
-    summary: 'Living, kitchen, two guest suites and the pool terrace',
+    summary: 'Living room, kitchen, two guest suites and the pool terrace.',
     rooms: [
       { id: 'living', name: 'Living room', x: 80, y: 120, w: 340, h: 210, text: 'Open on two sides to the pool terrace, with the linear fireplace on the stone wall.' },
       { id: 'kitchen', name: 'Kitchen and dining', x: 420, y: 120, w: 200, h: 210, text: 'Travertine island, oak table for twelve, pantry behind.' },
