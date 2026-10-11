@@ -1,0 +1,180 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>Serra — A house grown from the hillside</title>
+  <meta name="description" content="Serra is a concept villa on a green Mediterranean ridge above the sea. Follow it from the first line on the drawing board to the finished house." />
+  <meta name="theme-color" content="#18231D" />
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+</head>
+<body>
+  <a class="skip-link" href="#house">Skip to content</a>
+
+  <!-- Preloader -->
+  <div class="loader" aria-hidden="true">
+    <svg class="loader__ridge" viewBox="0 0 600 60" preserveAspectRatio="none">
+      <path d="M0,50 L60,42 L102,46 L156,26 L228,50 L600,50" />
+    </svg>
+    <span class="loader__count">0</span>
+  </div>
+
+  <!-- Header: glass over the journey, solid afterwards -->
+  <header class="header" data-state="glass">
+    <a class="header__brand" href="#top" aria-label="Serra, back to the start">
+      <span class="wordmark" aria-hidden="true">SERRA<svg viewBox="0 0 100 8" preserveAspectRatio="none"><path d="M0,7 L10,3.5 L17,5.2 L26,0.8 L38,7 L100,7"/></svg></span>
+    </a>
+    <nav class="header__nav" aria-label="Main">
+      <a href="#house">The house</a>
+      <a href="#plan">Plan</a>
+      <a href="#spaces">Spaces</a>
+      <a href="#light">Light</a>
+      <a href="#location">Location</a>
+    </nav>
+    <a class="btn btn--ghost header__cta" href="#viewing">Request a viewing</a>
+    <button class="header__menu" type="button" aria-expanded="false" aria-controls="menu">
+      <span class="sr-only">Open menu</span><i></i><i></i>
+    </button>
+  </header>
+
+  <div class="menu" id="menu" role="dialog" aria-modal="true" aria-label="Menu" hidden>
+    <nav aria-label="Mobile">
+      <a href="#house">The house</a>
+      <a href="#plan">Plan</a>
+      <a href="#spaces">Spaces</a>
+      <a href="#light">Light</a>
+      <a href="#location">Location</a>
+    </nav>
+    <a class="btn btn--solid" href="#viewing">Request a viewing</a>
+    <button class="menu__close" type="button">Close menu</button>
+  </div>
+
+  <main id="top">
+    <!-- 1. The journey: idea → site → construction → fly-through -->
+    <section class="journey" aria-label="From the first line to the finished house">
+      <div class="journey__stage">
+        <div class="layer layer--studio">
+          <img class="studio__img" alt="" />
+          <svg class="holo" viewBox="0 0 1000 560" aria-hidden="true"></svg>
+        </div>
+        <div class="layer layer--build"></div>
+        <div class="layer layer--film">
+          <video class="film" muted playsinline preload="auto" aria-hidden="true"></video>
+        </div>
+        <div class="journey__shade"></div>
+
+        <div class="chapters"></div>
+
+        <ol class="stages" aria-label="Construction stages"></ol>
+
+        <div class="journey__foot">
+          <span class="scroll-cue">Scroll to build the house</span>
+          <a class="skip-tour" href="#house">Skip the tour</a>
+        </div>
+      </div>
+    </section>
+
+    <!-- 2. The house -->
+    <section class="house" id="house">
+      <div class="house__intro">
+        <h2 class="display">Two long levels of travertine, set into the ridge so the hill keeps its shape.</h2>
+        <p>Serra follows the slope instead of fighting it. The living floor opens onto a 28-metre pool that ends at the edge of the cliff; the bedrooms sit above under a slatted oak pergola. Every room faces the bay.</p>
+      </div>
+      <dl class="facts">
+        <div><dt>Interior</dt><dd>420 m²</dd></div>
+        <div><dt>Suites</dt><dd>5</dd></div>
+        <div><dt>Infinity pool</dt><dd>28 m</dd></div>
+        <div><dt>Garden</dt><dd>3,800 m²</dd></div>
+      </dl>
+    </section>
+
+    <!-- 3. Plan -->
+    <section class="plan" id="plan">
+      <div class="plan__head">
+        <h2 class="display">Walk the plan</h2>
+        <p>Choose a level, then point at a room to see what it holds.</p>
+        <div class="plan__tabs" role="tablist" aria-label="Level">
+          <button role="tab" aria-selected="true" data-level="terrace">Terrace level</button>
+          <button role="tab" aria-selected="false" data-level="pool">Pool level</button>
+        </div>
+      </div>
+      <div class="plan__body">
+        <svg class="plan__svg" viewBox="0 0 1000 620" role="img" aria-label="Floor plan"></svg>
+        <aside class="plan__info" aria-live="polite">
+          <h3 class="plan__room">Terrace level</h3>
+          <p class="plan__area">Entrance, master suite and the pergola terrace</p>
+          <p class="plan__note">Point at a room or use Tab to move through them.</p>
+        </aside>
+      </div>
+    </section>
+
+    <!-- 4. Spaces -->
+    <section class="spaces" id="spaces" aria-label="Spaces">
+      <div class="spaces__sticky">
+        <div class="spaces__media"></div>
+        <div class="spaces__text">
+          <div class="spaces__progress"><i></i></div>
+          <div class="spaces__copy"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 5. Light -->
+    <section class="light" id="light">
+      <div class="light__frame">
+        <img class="light__img light__img--day" alt="" />
+        <img class="light__img light__img--gold" alt="Serra at golden hour" />
+        <img class="light__img light__img--night" alt="" />
+      </div>
+      <div class="light__ui">
+        <h2 class="display">One view, all day</h2>
+        <p class="light__time" aria-live="polite">19:20, golden hour</p>
+        <label class="sr-only" for="light-range">Time of day</label>
+        <input id="light-range" type="range" min="0" max="100" value="50" step="0.1" />
+        <div class="light__scale" aria-hidden="true"><span>Morning</span><span>Golden hour</span><span>Blue hour</span></div>
+      </div>
+    </section>
+
+    <!-- 6. Materials -->
+    <section class="materials" id="materials">
+      <h2 class="display">Four materials, nothing else</h2>
+      <p class="materials__lead">Move across a sample to look closer.</p>
+      <ul class="materials__grid"></ul>
+    </section>
+
+    <!-- 7. Location -->
+    <section class="location" id="location">
+      <div class="location__text">
+        <h2 class="display">A ridge between the pines and the bay</h2>
+        <p>The house sits at the end of a private road, 140 metres above the water, with the village and its harbour across the bay.</p>
+        <ul class="distances"></ul>
+      </div>
+      <svg class="coast" viewBox="0 0 600 600" aria-hidden="true"></svg>
+    </section>
+
+    <!-- 8. Viewing -->
+    <section class="viewing" id="viewing">
+      <div class="viewing__text">
+        <h2 class="display">Come and see the light for yourself</h2>
+        <p>Private viewings run at golden hour, when the house looks the way it was drawn.</p>
+      </div>
+      <form class="form" novalidate>
+        <label>Name<input name="name" autocomplete="name" required /></label>
+        <label>Email<input name="email" type="email" autocomplete="email" required /></label>
+        <label>Preferred month<select name="month"><option>June</option><option>July</option><option>August</option><option>September</option><option>October</option></select></label>
+        <label class="form__wide">Anything we should know<textarea name="note" rows="3"></textarea></label>
+        <button class="btn btn--solid" type="submit">Request a viewing</button>
+        <p class="form__status" role="status"></p>
+        <p class="form__demo">Concept site: requests are not sent anywhere.</p>
+      </form>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <span class="wordmark wordmark--foot">SERRA<svg viewBox="0 0 100 8" preserveAspectRatio="none" aria-hidden="true"><path d="M0,7 L10,3.5 L17,5.2 L26,0.8 L38,7 L100,7"/></svg></span>
+    <p>Serra is a fictional property. Concept, design and imagery by Marta Jakovleva, 2026.</p>
+  </footer>
+
+  <script type="module" src="/src/main.js"></script>
+</body>
+</html>
