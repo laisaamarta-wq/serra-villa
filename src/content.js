@@ -26,9 +26,9 @@ export const MEDIA = {
   matLinen: u('bb614efd-c32a-4c80-9f06-6d25fec29c95'),
   matWater: u('5c89cba5-1b82-4d3e-9c89-64c2a016a891'),
   film: {
-    desktop: u('bdd6d27e-d813-4ce1-afb1-0800875a3cd8', 'mp4'), // 1600×900, keyframe every 8 frames
-    mobile: u('4094763a-bac0-4a78-a986-9fb60f9c3f14', 'mp4'), // 1280×720
-    duration: 20.0,
+    desktop: u('1e15b776-b73a-4e7f-9526-c746dd1a89b8', 'mp4'), // 1600×900, keyframe every 8 frames
+    mobile: u('00080901-ae94-4a56-a8d2-d06b0b0c1480', 'mp4'), // 1280×720
+    duration: 30.0,
   },
 };
 
@@ -52,22 +52,26 @@ export const BEATS = [
   { id: 'stone', type: 'build', from: 3, to: 4, vh: 0.8, mvh: 0.6 },
   { id: 'water', type: 'build', from: 4, to: 5, vh: 0.8, mvh: 0.6 },
   { id: 'finished', type: 'film', from: 0, to: 0, vh: 0.9, mvh: 0.6, focus: 0.42 },
-  { id: 'approach', type: 'film', from: 0, to: 3.5, vh: 1.2, mvh: 0.9, focus: 0.45 },
-  { id: 'pool', type: 'film', from: 3.5, to: 7.4, vh: 1.6, mvh: 1.2, focus: 0.5 },
-  { id: 'glass', type: 'film', from: 7.4, to: 8.4, vh: 0.7, mvh: 0.5, focus: 0.55 },
-  { id: 'living', type: 'film', from: 8.4, to: 12.0, vh: 2.0, mvh: 1.4, focus: 0.4 },
-  { id: 'terrace', type: 'film', from: 12.0, to: 15.1, vh: 1.4, mvh: 1.0, focus: 0.55 },
-  { id: 'turn', type: 'film', from: 15.1, to: 15.95, vh: 0.9, mvh: 0.7, focus: 0.5 },
-  { id: 'reveal', type: 'film', from: 15.95, to: 20.0, vh: 2.0, mvh: 1.4, focus: 0.42 },
-  { id: 'end', type: 'film', from: 20.0, to: 20.0, vh: 0.8, mvh: 0.5, focus: 0.42 },
+  { id: 'dive', type: 'film', from: 0, to: 3.0, vh: 1.0, mvh: 0.8, focus: 0.45 },
+  { id: 'pool', type: 'film', from: 3.0, to: 6.0, vh: 1.1, mvh: 0.9, focus: 0.5 },
+  { id: 'living', type: 'film', from: 6.0, to: 9.5, vh: 1.8, mvh: 1.3, focus: 0.45 },
+  { id: 'kitchen', type: 'film', from: 9.5, to: 13.0, vh: 1.8, mvh: 1.3, focus: 0.4 },
+  { id: 'stairs', type: 'film', from: 13.0, to: 16.6, vh: 1.2, mvh: 0.9, focus: 0.35 },
+  { id: 'bedroom', type: 'film', from: 16.6, to: 21.0, vh: 1.8, mvh: 1.3, focus: 0.45 },
+  { id: 'pergola', type: 'film', from: 21.0, to: 24.6, vh: 1.3, mvh: 1.0, focus: 0.45 },
+  { id: 'turn', type: 'film', from: 24.6, to: 26.6, vh: 0.9, mvh: 0.7, focus: 0.5 },
+  { id: 'reveal', type: 'film', from: 26.6, to: 30.0, vh: 1.8, mvh: 1.3, focus: 0.55 },
+  { id: 'end', type: 'film', from: 30.0, to: 30.0, vh: 0.8, mvh: 0.5, focus: 0.55 },
 ];
 
 // Copy chapters: shown while the scroll is between the start of `from` beat and the end of `to` beat.
 export const CHAPTERS = [
   { from: 'studio', to: 'studio', place: 'center', title: ['Every house', 'begins as a line'], body: 'Serra was drawn for one ridge above the sea, and for nothing else.' },
   { from: 'site', to: 'site', place: 'left', title: ['A ridge above', 'the bay'], body: 'Pines, limestone and wild rosemary. The plan keeps the slope exactly as it was found.' },
-  { from: 'finished', to: 'approach', place: 'left', title: ['Serra'], body: 'A house grown from the hillside.', cta: { label: 'Request a viewing', href: '#viewing' }, hero: true },
+  { from: 'finished', to: 'dive', place: 'left', title: ['Serra'], body: 'A house grown from the hillside.', cta: { label: 'Request a viewing', href: '#viewing' }, hero: true },
   { from: 'living', to: 'living', place: 'right', title: ['Space follows', 'the light'], body: 'The living floor opens on two sides, so the room is never far from the water.' },
+  { from: 'kitchen', to: 'kitchen', place: 'left', title: ['A table for twelve,', 'a step from the pool'], body: 'One block of travertine for the island, oak for everything the hands touch.' },
+  { from: 'bedroom', to: 'bedroom', place: 'right', title: ['Evenings end', 'over the bay'], body: 'The master suite faces the sunset, behind one sliding wall of glass.' },
   { from: 'reveal', to: 'end', place: 'left', title: ['The view was', 'designed first'], body: '420 m² on two levels, five suites, a 28-metre pool at the edge of the cliff.', cta: { label: 'Explore the house', href: '#house' } },
 ];
 
@@ -83,7 +87,7 @@ export const SPACES = [
   { key: 'living', name: 'Living room', text: 'Ninety square metres under one thin concrete roof, with a linear fireplace set into the travertine wall. Both glass walls slide away into the stone.' },
   { key: 'kitchen', name: 'Kitchen and dining', text: 'A single block of travertine for the island and a long oak table for twelve, a step from the terrace.' },
   { key: 'pergola', name: 'Pergola terrace', text: 'Slatted oak overhead draws moving stripes of shade across the floor from noon until sunset.' },
-  { key: 'bedroom', name: 'Master suite', text: 'The bed faces east, so the first light of the day arrives over the bay and through the olive branches.' },
+  { key: 'bedroom', name: 'Master suite', text: 'The bed faces the bay, so the last light of the day arrives through the olive branches and the linen curtain.' },
   { key: 'bath', name: 'Bath', text: 'A tub carved from one piece of stone, set where the pines frame the water.' },
   { key: 'garden', name: 'Garden', text: 'Old olive trees kept in place during construction, with limestone steps laid by hand between them.' },
 ];
