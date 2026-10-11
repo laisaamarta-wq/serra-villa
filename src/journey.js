@@ -28,6 +28,7 @@ export function initJourney({ isStatic, isPhone }) {
   const chaptersEl = section.querySelector('.chapters');
   const stagesEl = section.querySelector('.stages');
   const cue = section.querySelector('.scroll-cue');
+  const foot = section.querySelector('.journey__foot');
 
   // ---------- chapters ----------
   const chapterNodes = CHAPTERS.map((c, i) => {
@@ -179,8 +180,8 @@ export function initJourney({ isStatic, isPhone }) {
     }
 
     // chapters
-    const fade = 0.35;
     chapterRanges.forEach((r, i) => {
+      const fade = Math.min(0.35, (r.end - r.start) * 0.3);
       const first = i === 0; const last = i === chapterRanges.length - 1;
       const ein = first ? 1 : clamp((p - r.start) / fade);
       const eout = last ? 1 : clamp((r.end - p) / fade);
@@ -206,6 +207,8 @@ export function initJourney({ isStatic, isPhone }) {
     });
 
     cue.style.opacity = p > 0.15 ? '0' : '1';
+    const footOn = p < total - 0.6;
+    if (foot.classList.contains('is-off') === footOn) foot.classList.toggle('is-off', !footOn);
     return p;
   }
 

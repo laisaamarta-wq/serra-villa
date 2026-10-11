@@ -70,7 +70,7 @@ export const CHAPTERS = [
   { from: 'site', to: 'site', place: 'left', title: ['A ridge above', 'the bay'], body: 'Pines, limestone and wild rosemary. The plan keeps the slope exactly as it was found.' },
   { from: 'finished', to: 'dive', place: 'left', title: ['Serra'], body: 'A house grown from the hillside.', cta: { label: 'Request a viewing', href: '#viewing' }, hero: true },
   { from: 'living', to: 'living', place: 'right', title: ['Space follows', 'the light'], body: 'The living floor opens on two sides, so the room is never far from the water.' },
-  { from: 'kitchen', to: 'kitchen', place: 'left', title: ['A table for twelve,', 'a step from the pool'], body: 'One block of travertine for the island, oak for everything the hands touch.' },
+  { from: 'kitchen', to: 'kitchen', place: 'left', title: ['A table', 'for twelve'], body: 'A step from the pool. One block of travertine for the island, oak for everything the hands touch.' },
   { from: 'bedroom', to: 'bedroom', place: 'right', title: ['Evenings end', 'over the bay'], body: 'The master suite faces the sunset, behind one sliding wall of glass.' },
   { from: 'reveal', to: 'end', place: 'left', title: ['The view was', 'designed first'], body: '420 m² on two levels, five suites, a 28-metre pool at the edge of the cliff.', cta: { label: 'Explore the house', href: '#house' } },
 ];
