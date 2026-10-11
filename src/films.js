@@ -1,93 +1,157 @@
 import { MEDIA, WALK, MAKING } from './content.js';
-import { reducedMotion } from './motion.js';
+import { reducedMotion, onceVisible } from './motion.js';
 
 const isPhone = () => window.matchMedia('(max-width: 640px)').matches;
 const pad = (n) => String(n).padStart(2, '0');
 
 /* ---------------- Opening film ----------------
-   The walk-through plays once, muted, as soon as the page opens. Its last frame is the
-   first frame of the aerial loop, so the loop takes over without a visible cut. */
+   The walk-through plays once, muted, as soon as the page opens. Over its last seconds the
+   camera eases to a stop and the film holds on the villa; "Watch again" restarts it.
+   Every play request carries a run number, so a restart cancels any request still pending
+   and two playback attempts can never compete. */
 export function initFilm() {
   const film = document.querySelector('.film');
   const walk = film.querySelector('.film__walk');
-  const loop = film.querySelector('.film__loop');
   const toggle = film.querySelector('.film__toggle');
   const label = toggle.querySelector('.sr-only');
+  const replay = film.querySelector('.film__replay');
   const num = film.querySelector('.film__num');
   const room = film.querySelector('.film__room');
   const chapterEl = film.querySelector('.film__chapter');
   const bar = film.querySelector('.film__progress');
-  const phone = isPhone();
+  const src = isPhone() ? MEDIA.walk.mobile : MEDIA.walk.desktop;
 
-  walk.poster = MEDIA.master; // frame 0 of the film
-  walk.src = phone ? MEDIA.walk.mobile : MEDIA.walk.desktop;
-  loop.poster = phone ? MEDIA.hero.posterMobile : MEDIA.hero.poster;
+  walk.poster = MEDIA.master; // the first frame of the film
+  walk.src = src;
 
-  let active = walk;
   let userPaused = reducedMotion();
   let covered = false;
+  let ended = false;
   let chapter = -1;
+  let run = 0; // increments on every restart; stale play/seek callbacks compare against it
 
   const setState = (playing) => {
     film.classList.toggle('is-playing', playing);
     toggle.setAttribute('aria-pressed', String(!playing));
     label.textContent = playing ? 'Pause the film' : 'Play the film';
   };
-  const play = () => active.play().then(() => setState(true)).catch(() => setState(false));
+  const play = () => {
+    if (covered || ended) return;
+    const token = run;
+    const p = walk.play();
+    if (p && p.then) p.then(() => { if (token === run) setState(true); }).catch(() => { if (token === run) setState(!walk.paused); });
+    else setState(!walk.paused);
+  };
 
-  const setChapter = (i, name) => {
+  const setChapter = (i) => {
     if (i === chapter) return;
     chapter = i;
     chapterEl.classList.remove('is-swap'); void chapterEl.offsetWidth; chapterEl.classList.add('is-swap');
-    num.textContent = pad(i + 1); room.textContent = name;
+    num.textContent = pad(i + 1); room.textContent = WALK[i].name;
   };
 
-  // on portrait phones, drift the crop toward the villa so the hand-off to the loop lines up
-  const alignCrop = () => {
-    if (!phone) return;
-    const W = window.innerHeight * 16 / 9; const vw = window.innerWidth;
-    const x = Math.max(0, Math.min(100, ((0.33 * W - vw / 2) / Math.max(1, W - vw)) * 100));
-    walk.style.objectPosition = `${x.toFixed(1)}% 50%`;
+  // the last 2.2 s: the camera decelerates instead of stopping dead
+  const EASE = 2.2;
+  let easing = false;
+  const ease = () => {
+    const d = walk.duration || 30; const left = d - walk.currentTime;
+    if (walk.paused || ended || left > EASE) { easing = false; if (left > EASE) walk.playbackRate = 1; return; }
+    const k = Math.max(0, left / EASE); // 1 → 0
+    walk.playbackRate = Math.max(0.38, 0.38 + 0.62 * k * k);
+    requestAnimationFrame(ease);
   };
 
   walk.addEventListener('timeupdate', () => {
     const t = walk.currentTime; const d = walk.duration || 30;
     bar.style.setProperty('--p', (t / d).toFixed(4));
     let a = 0; WALK.forEach((c, i) => { if (t >= c.t - 0.05) a = i; });
-    setChapter(a, WALK[a].name);
-    if (t > d - 12 && !loop.src) { loop.src = phone ? MEDIA.hero.mobile : MEDIA.hero.desktop; loop.preload = 'auto'; loop.load(); }
-    if (t > d - 3) alignCrop();
+    setChapter(a);
+    if (!easing && !reducedMotion() && d - t <= EASE && !walk.paused) { easing = true; requestAnimationFrame(ease); }
   });
   walk.addEventListener('ended', () => {
-    if (!loop.src) loop.src = phone ? MEDIA.hero.mobile : MEDIA.hero.desktop;
-    active = loop;
-    loop.currentTime = 0;
-    film.classList.add('is-looping');
+    ended = true;
+    film.classList.add('is-ended');
     bar.style.setProperty('--p', '1');
-    if (!userPaused && !covered) play();
+    walk.playbackRate = 1;
+    setState(false);
   });
-  walk.addEventListener('playing', () => film.classList.add('has-started'));
+  walk.addEventListener('error', () => film.classList.add('is-fallback'));
+
+  // return to the opening frame and play from there
+  const restart = () => {
+    const token = ++run;
+    userPaused = false; ended = false; easing = false;
+    film.classList.remove('is-ended', 'is-fallback');
+    walk.pause();
+    walk.playbackRate = 1;
+    bar.style.setProperty('--p', '0');
+    chapter = -1; setChapter(0);
+    const start = () => {
+      if (token !== run) return;
+      if (walk.currentTime < 0.05) { play(); return; }
+      let done = false;
+      const go = () => { if (done) return; done = true; walk.removeEventListener('seeked', go); if (token === run) play(); };
+      walk.addEventListener('seeked', go);
+      setTimeout(go, 1500); // some browsers skip 'seeked' for a seek to the current position
+      walk.currentTime = 0;
+    };
+    if (walk.error) { walk.src = src; walk.load(); }
+    if (walk.readyState >= 1) start(); else walk.addEventListener('loadedmetadata', start, { once: true });
+  };
 
   if (!userPaused) play(); else setState(false);
 
   toggle.addEventListener('click', () => {
-    if (active.paused) { userPaused = false; play(); } else { userPaused = true; active.pause(); setState(false); }
+    if (ended) { restart(); return; }
+    if (walk.paused) { userPaused = false; play(); } else { userPaused = true; walk.pause(); setState(false); }
   });
+  replay.addEventListener('click', restart);
 
   const content = film.querySelector('.film__content');
-  return () => {
+  const update = () => {
     const y = window.scrollY; const vh = window.innerHeight;
     // the pinned film is covered by the page: stop decoding until it shows again
     const nowCovered = y > film.offsetHeight * 1.02;
     if (nowCovered !== covered) {
       covered = nowCovered;
-      if (covered) active.pause(); else if (!userPaused) play();
+      if (covered) walk.pause(); else if (!userPaused) play();
     }
     if (y > vh * 1.2) return;
     const k = Math.min(1, y / vh);
     film.style.setProperty('--cover', k.toFixed(3));
     if (!reducedMotion()) content.style.transform = `translate3d(0, ${(-k * 60).toFixed(1)}px, 0)`;
   };
+  return { update, restart };
+}
+
+/* ---------------- The ridge: aerial film in the location chapter ----------------
+   Approaches the villa and pulls away again. Loads near the section, plays while in view. */
+export function initAerial() {
+  const root = document.querySelector('.location__hero');
+  const video = root.querySelector('.location__video');
+  const toggle = root.querySelector('.location__toggle');
+  const label = toggle.querySelector('.sr-only');
+  const phone = isPhone();
+  video.poster = phone ? MEDIA.hero.posterMobile : MEDIA.hero.poster;
+  let loaded = false; let inView = false; let userPaused = reducedMotion();
+  const setState = (playing) => {
+    toggle.setAttribute('aria-pressed', String(!playing));
+    label.textContent = playing ? 'Pause the aerial film' : 'Play the aerial film';
+  };
+  const ensure = () => { if (!loaded) { loaded = true; video.src = phone ? MEDIA.hero.mobile : MEDIA.hero.desktop; } };
+  const play = () => { ensure(); const p = video.play(); if (p && p.then) p.then(() => setState(true)).catch(() => setState(false)); };
+  setState(false);
+  onceVisible(root, () => root.classList.add('is-in'), '0px 0px -15% 0px');
+  new IntersectionObserver(([e]) => { if (e.isIntersecting) ensure(); }, { rootMargin: '500px 0px' }).observe(root);
+  new IntersectionObserver(([e]) => {
+    inView = e.intersectionRatio >= 0.35;
+    if (inView && !userPaused) play();
+    else if (!inView && !video.paused) { video.pause(); setState(false); }
+  }, { threshold: [0, 0.35, 0.6] }).observe(root);
+  toggle.addEventListener('click', () => {
+    if (video.paused) { userPaused = false; play(); } else { userPaused = true; video.pause(); setState(false); }
+  });
+  video.addEventListener('error', () => root.classList.add('is-fallback'));
 }
 
 /* ---------------- The making of the villa ----------------

@@ -22,18 +22,19 @@ export const MEDIA = {
   matOak: u('bdf89346-3571-45e6-9bae-a3b3e54fdadd'),
   matLinen: u('bb614efd-c32a-4c80-9f06-6d25fec29c95'),
   matWater: u('5c89cba5-1b82-4d3e-9c89-64c2a016a891'),
-  // the wide aerial frame the opening film ends on, reused for the location section
-  aerial: u('4cc25c34-2537-4b89-b083-2a4d61f2722f', 'jpg'),
+  // a frame of the walk-through: the lit stair from the entrance hall down to the living floor
+  stair: u('548daae7-d5e5-41e7-86e4-39f5e8c5c442', 'jpg'),
+  // aerial film for the location chapter: approaches the villa and pulls away again
   hero: {
     desktop: u('469f8d69-ebc6-4c69-919e-525342a976f7', 'mp4'),
     mobile: u('3ba65265-8fa1-4348-b116-b54d95fdc576', 'mp4'),
     poster: u('4cc25c34-2537-4b89-b083-2a4d61f2722f', 'jpg'),
     posterMobile: u('9673ec20-6339-4635-8596-275e7d23ce53', 'jpg'),
   },
-  // the walk-through film opens the site; the aerial loop continues from its last frame
+  // the walk-through film opens the site (drone artefact over the pool removed at 26.6–27.2 s)
   walk: {
-    desktop: u('9afc9a2d-b6c3-43de-8f72-3c5a18c5434c', 'mp4'),
-    mobile: u('cd8ce0ee-2bfc-41ab-8ed5-895688b40a3b', 'mp4'),
+    desktop: u('13572a40-121b-4be5-83cd-86017e1ac895', 'mp4'),
+    mobile: u('1e45bb3a-5182-432e-9e50-3439a12ad7ff', 'mp4'),
   },
   making: {
     desktop: u('920dc112-7ef9-471c-9f51-fd7cbc8b81c8', 'mp4'),
@@ -74,6 +75,7 @@ export const MAKING = [
 
 // Photographs linked to rooms on the plan (keys of MEDIA).
 export const ROOM_PHOTOS = {
+  entry: { key: 'stair', name: 'The stair down to the living floor', detail: 'the stair down to the living floor' },
   living: { key: 'living', name: 'Living room' },
   kitchen: { key: 'kitchen', name: 'Kitchen and dining' },
   master: { key: 'bedroom', name: 'Master suite' },
@@ -90,14 +92,8 @@ export const MATERIALS = [
   { key: 'matWater', context: 'day', name: 'Water', where: 'Pool terrace', text: 'A 28-metre edge that spills over the stone and seems to run into the bay.' },
 ];
 
-// Time of day: each state switches the photograph and the text.
-export const LIGHT = [
-  { key: 'day', name: 'Morning', title: 'The pool terrace first', text: 'The day starts on the lower terrace, beside the 28-metre pool, with the living room open behind on two sides.' },
-  { key: 'master', name: 'Golden hour', title: 'The hour it was drawn for', text: 'The low sun runs the length of the pool, and the slatted oak of the pergola draws long stripes of shade across the upper terrace.' },
-  { key: 'night', name: 'Blue hour', title: 'Lit from within', text: 'After sunset the travertine keeps the warmth of the day, and the glass walls turn the house into a lantern on the ridge.' },
-];
-
-// Places on the illustrative map. Coordinates are in the 600 × 600 map drawing; `at: null` is off the map.
+// Places near Serra, from the concept brief. Kept as data; the page now mentions them in one line
+// in the location chapter and the airport time in the stay section.
 export const PLACES = [
   { id: 'serra', place: 'Serra', how: 'At the end of a private road, 140 m above the water', at: [298, 342] },
   { id: 'cove', place: 'Swimming cove', how: '600 m on a stone path', at: [176, 436] },

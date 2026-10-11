@@ -5,23 +5,35 @@ import '@fontsource/cormorant-garamond/latin-500.css';
 import '@fontsource/inter/latin-400.css';
 import '@fontsource/inter/latin-500.css';
 import './styles.css';
-import { initReveals, initParallax } from './motion.js';
-import { initFilm, initMaking } from './films.js';
+import { initReveals, initParallax, reducedMotion } from './motion.js';
+import { initFilm, initMaking, initAerial } from './films.js';
 import { initLightbox } from './lightbox.js';
 import { initPlan } from './plan.js';
-import { initImages, initSpecs, initConcept, initMaterials, initLife, initLocation, initStay } from './sections.js';
+import { initImages, initSpecs, initConcept, initMaterials, initCompare, initStay } from './sections.js';
 
 document.documentElement.classList.add('js');
+
+// A reload starts the experience again from the opening film, instead of reopening
+// part-way down the page at the last #anchor with the film already running.
+if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
+const navEntry = performance.getEntriesByType && performance.getEntriesByType('navigation')[0];
+const isReload = navEntry && navEntry.type === 'reload';
+if (isReload) {
+  if (location.hash) history.replaceState(null, '', location.pathname + location.search);
+  window.scrollTo(0, 0);
+  window.addEventListener('load', () => window.scrollTo(0, 0), { once: true });
+}
+
 initImages();
 initLightbox();
-const updateFilm = initFilm();
+const filmPlayer = initFilm();
 initSpecs();
-initConcept();
+const updateConcept = initConcept();
 initPlan();
 initMaterials();
 initMaking();
-initLife();
-initLocation();
+initCompare();
+initAerial();
 initStay();
 initReveals();
 const updateParallax = initParallax();
@@ -37,11 +49,20 @@ const headerState = () => {
 };
 
 let ticking = false;
-const frame = () => { ticking = false; updateFilm(); updateParallax(); headerState(); };
+const frame = () => { ticking = false; filmPlayer.update(); updateConcept(); updateParallax(); headerState(); };
 const request = () => { if (!ticking) { ticking = true; requestAnimationFrame(frame); } };
 window.addEventListener('scroll', request, { passive: true });
 window.addEventListener('resize', request);
 frame();
+
+/* ---------- the brand in the top corner: back to the start of the film ---------- */
+document.querySelector('.header__brand').addEventListener('click', (e) => {
+  e.preventDefault();
+  closeMenu({ restoreFocus: false });
+  if (location.hash) history.replaceState(null, '', location.pathname + location.search);
+  window.scrollTo({ top: 0, behavior: reducedMotion() ? 'auto' : 'smooth' });
+  filmPlayer.restart();
+});
 
 /* ---------- mobile menu ---------- */
 const menu = document.getElementById('menu');

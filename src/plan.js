@@ -71,9 +71,34 @@ export function initPlan() {
     level: info.querySelector('.plans__level'), room: info.querySelector('.plans__room'), area: info.querySelector('.plans__area'),
     note: info.querySelector('.plans__note'), photo: info.querySelector('.plans__photo'), list: info.querySelector('.plans__list'),
     detail: info.querySelector('.plans__detail'), back: info.querySelector('.plans__back'),
+    caption: info.querySelector('.plans__caption'), empty: info.querySelector('.plans__empty'),
     tbLevel: section.querySelector('.plans__tb-level'), tbSheet: section.querySelector('.plans__tb-sheet'),
   };
   const photoImg = el.photo.querySelector('img');
+  const emptySvg = el.empty.querySelector('svg');
+  // fade each new photograph in once it has loaded, so the panel never flashes empty
+  photoImg.addEventListener('load', () => el.photo.classList.remove('is-loading'));
+  const showPhoto = (key, name) => {
+    el.empty.hidden = true; el.photo.hidden = false;
+    el.caption.textContent = name;
+    if (photoImg.getAttribute('src') === MEDIA[key]) return;
+    el.photo.classList.add('is-loading');
+    photoImg.src = MEDIA[key]; photoImg.alt = name;
+  };
+  // a room without a photograph: draw it on its own, with its measured size
+  const showEmpty = (r) => {
+    el.photo.hidden = true; el.empty.hidden = false;
+    const s = Math.min(240 / r.w, 140 / r.h); const w = r.w * s; const h = r.h * s; const x = (300 - w) / 2; const y = (200 - h) / 2 + 6;
+    const wM = (r.w / UNITS_PER_M).toFixed(1); const hM = (r.h / UNITS_PER_M).toFixed(1);
+    emptySvg.innerHTML = `<rect x="${x}" y="${y}" width="${w}" height="${h}" class="e-room"/>`
+      + `<path class="e-dim" d="M${x},${y - 14} L${x + w},${y - 14} M${x},${y - 19} L${x},${y - 9} M${x + w},${y - 19} L${x + w},${y - 9}"/>`
+      + `<text x="${x + w / 2}" y="${y - 20}" text-anchor="middle">${wM} m</text>`
+      + `<path class="e-dim" d="M${x + w + 14},${y} L${x + w + 14},${y + h} M${x + w + 9},${y} L${x + w + 19},${y} M${x + w + 9},${y + h} L${x + w + 19},${y + h}"/>`
+      + `<text x="${x + w + 24}" y="${y + h / 2 + 4}">${hM} m</text>`;
+  };
+  // every photograph on the current level, for the gallery
+  const levelPhotos = () => [{ src: MEDIA.reveal, name: 'Serra from the air', text: 'Both levels, set into the slope above the bay.' }]
+    .concat(PLAN[level].rooms.filter((r) => ROOM_PHOTOS[r.id]).map((r) => ({ src: MEDIA[ROOM_PHOTOS[r.id].key], name: ROOM_PHOTOS[r.id].detail ? `${r.name}: ${ROOM_PHOTOS[r.id].detail}` : r.name, text: r.text, id: r.id })));
   const scaleBar = section.querySelector('.plans__scale i');
 
   const levels = { terrace: drawLevel('terrace'), pool: drawLevel('pool') };
@@ -135,7 +160,8 @@ export function initPlan() {
     el.level.textContent = level === 'terrace' ? 'Upper level' : 'Lower level';
     el.room.textContent = L.title;
     el.area.textContent = `${L.rooms.length} spaces on this level`;
-    el.note.textContent = L.summary; el.photo.hidden = true; el.back.hidden = true;
+    el.note.textContent = L.summary; el.back.hidden = true;
+    showPhoto('reveal', 'Serra from the air: both levels on the slope');
   };
   const swap = () => { el.detail.classList.remove('is-swap'); void el.detail.offsetWidth; el.detail.classList.add('is-swap'); };
   const select = (id, { focusPlan = false } = {}) => {
@@ -153,13 +179,13 @@ export function initPlan() {
     el.area.textContent = `${area(r)} m²${r.outdoor ? ', outdoors' : ''}`;
     el.note.textContent = r.text;
     const ph = ROOM_PHOTOS[r.id];
-    if (ph) { photoImg.src = MEDIA[ph.key]; photoImg.alt = ph.name; el.photo.hidden = false; } else el.photo.hidden = true;
+    if (ph) showPhoto(ph.key, ph.name); else showEmpty(r);
     el.back.hidden = false;
     if (focusPlan) animateTo(Math.max(view.s, 1.35), r.x + r.w / 2, r.y + r.h / 2);
   };
   el.photo.querySelector('button').addEventListener('click', () => {
-    const ph = ROOM_PHOTOS[selected]; const r = PLAN[level].rooms.find((x) => x.id === selected);
-    if (ph) openLightbox([{ src: MEDIA[ph.key], name: ph.name, text: r ? r.text : '' }]);
+    const list = levelPhotos();
+    openLightbox(list, Math.max(0, list.findIndex((x) => x.id === selected)));
   });
   el.back.addEventListener('click', () => { select(null, { focusPlan: true }); });
 
