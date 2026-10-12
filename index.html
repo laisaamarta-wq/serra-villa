@@ -125,7 +125,7 @@
         <div class="plans__head">
           <p class="label"><span class="label__n">03</span>Plans</p>
           <h2 class="headline" data-reveal="lines"><span>Explore the villa</span></h2>
-          <p class="plans__hint">Choose a level, then a room on the plan or in the strip below. The arrow keys move from room to room.</p>
+          <p class="plans__hint">Choose a level, then a room on the plan or among the photographs. The arrow keys move from room to room.</p>
         </div>
         <div class="atlas__levels" role="tablist" aria-label="Level">
           <button role="tab" id="tab-terrace" aria-selected="true" aria-controls="plan-panel" data-level="terrace"><span>01</span>Terrace level</button>
@@ -133,6 +133,7 @@
           <i aria-hidden="true"></i>
         </div>
         <div class="plans__body">
+          <div class="plans__left">
           <div class="plans__sheet">
             <div class="plans__canvas" id="plan-panel" role="tabpanel" aria-labelledby="tab-terrace">
               <svg class="plans__svg" viewBox="0 0 1000 620" role="group" aria-label="Floor plan"></svg>
@@ -144,6 +145,12 @@
             </div>
             <div class="plans__titleblock" aria-hidden="true">
               <span>Serra</span><span class="plans__tb-level">Terrace level</span><span class="plans__tb-sheet">Drawing 01 of 02</span>
+            </div>
+          </div>
+            <div class="atlas__strip">
+              <button type="button" class="atlas__step" data-step="-1" aria-label="Previous room"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M12.5 4.5 7 10l5.5 5.5"/></svg></button>
+              <ol class="atlas__rooms" aria-label="Rooms on this level"></ol>
+              <button type="button" class="atlas__step" data-step="1" aria-label="Next room"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M7.5 4.5 13 10l-5.5 5.5"/></svg></button>
             </div>
           </div>
           <div class="atlas__view">
@@ -167,11 +174,6 @@
               <button type="button" class="atlas__back" hidden>Back to the full plan</button>
             </div>
           </div>
-        </div>
-        <div class="atlas__strip">
-          <button type="button" class="atlas__step" data-step="-1" aria-label="Previous room"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M12.5 4.5 7 10l5.5 5.5"/></svg></button>
-          <ol class="atlas__rooms" aria-label="Rooms on this level"></ol>
-          <button type="button" class="atlas__step" data-step="1" aria-label="Next room"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M7.5 4.5 13 10l-5.5 5.5"/></svg></button>
         </div>
       </section>
 
@@ -213,7 +215,7 @@
       <!-- 06 The setting -->
       <section class="location" id="location">
         <div class="location__hero">
-          <video class="location__video" muted playsinline loop preload="none" aria-label="Aerial film: the camera approaches Serra on its ridge and pulls away again over the pines and the bay"></video>
+          <video class="location__video" muted playsinline preload="none" aria-label="Aerial film: the camera flies in over the bay and settles on Serra on its ridge"></video>
           <div class="location__title">
             <p class="label label--light"><span class="label__n">06</span>The setting</p>
             <h2 class="headline" data-reveal="lines"><span>A ridge between</span> <span>the pines and the bay</span></h2>

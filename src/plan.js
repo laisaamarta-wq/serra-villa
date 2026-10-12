@@ -192,13 +192,19 @@ export function initPlan() {
     showPhoto('reveal', 'Serra from the air: both levels on the slope', 'Serra from the air, both levels on the slope above the bay');
   };
   const stripBtns = () => [...el.strip.querySelectorAll('button')];
+  // Scroll the thumbnail strip sideways only. scrollIntoView would also move the page
+  // down to the strip and push the plan out of view.
+  const centreInStrip = (b) => {
+    const s = el.strip.getBoundingClientRect(); const r = b.getBoundingClientRect();
+    el.strip.scrollTo({ left: el.strip.scrollLeft + (r.left - s.left) - (s.width - r.width) / 2, behavior: reducedMotion() ? 'auto' : 'smooth' });
+  };
   const select = (id, { focusPlan = true, scrollStrip = true } = {}) => {
     const L = PLAN[level];
     const r = L.rooms.find((x) => x.id === id);
     selected = r ? id : null;
     svg.querySelectorAll('.room, .badge').forEach((n) => { const on = n.dataset.room === selected; n.classList.toggle('is-selected', on); if (n.classList.contains('room')) n.setAttribute('aria-pressed', String(on)); });
     svg.classList.toggle('has-selection', !!selected);
-    stripBtns().forEach((b) => { const on = b.dataset.room === selected; b.setAttribute('aria-pressed', String(on)); if (on && scrollStrip) b.scrollIntoView({ block: 'nearest', inline: 'center', behavior: reducedMotion() ? 'auto' : 'smooth' }); });
+    stripBtns().forEach((b) => { const on = b.dataset.room === selected; b.setAttribute('aria-pressed', String(on)); if (on && scrollStrip) centreInStrip(b); });
     swap();
     if (!r) { showLevelInfo(); if (focusPlan) animateTo(1, W / 2, H / 2); return; }
     const i = L.rooms.indexOf(r);

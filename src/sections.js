@@ -90,13 +90,23 @@ export function initSetting() {
   const pins = root.querySelector('.setting__pins');
   const legend = root.querySelector('.setting__legend');
   pins.innerHTML = SETTING_MARKS.map((m, i) => `<li style="--x:${m.x}%;--y:${m.y}%" data-i="${i}"><span>${i + 1}</span></li>`).join('');
-  legend.innerHTML = SETTING_MARKS.map((m, i) => `<li data-i="${i}"><span class="setting__n">${i + 1}</span><h4>${m.name}</h4><p>${m.text}</p></li>`).join('');
+  // Names only; the chosen place opens its one-line description, so the list stays as tall as the photograph.
+  legend.innerHTML = SETTING_MARKS.map((m, i) => `<li data-i="${i}"><button type="button" aria-expanded="false" aria-controls="mark-${i}"><span class="setting__n">${i + 1}</span><span class="setting__name">${m.name}</span></button><div class="setting__more" id="mark-${i}"><div><p>${m.text}</p></div></div></li>`).join('');
   const all = [...pins.children, ...legend.children];
-  const light = (i) => all.forEach((el) => el.classList.toggle('is-lit', el.dataset.i === String(i)));
-  const from = (e) => { const li = e.target.closest('li[data-i]'); if (li) light(li.dataset.i); };
-  [pins, legend].forEach((el) => el.addEventListener('pointerover', from));
-  legend.addEventListener('click', from); // a tap on a phone lights the marker too
-  root.addEventListener('pointerleave', () => light(-1));
+  let chosen = 0;
+  const light = (i) => {
+    all.forEach((el) => el.classList.toggle('is-lit', el.dataset.i === String(i)));
+    legend.querySelectorAll('button').forEach((b, k) => b.setAttribute('aria-expanded', String(k === +i)));
+  };
+  const at = (e) => e.target.closest('li[data-i]');
+  // pointing previews a place; clicking or tapping (on the list or a marker) keeps it
+  [pins, legend].forEach((el) => {
+    el.addEventListener('pointerover', (e) => { if (e.pointerType === 'mouse' && at(e)) light(at(e).dataset.i); });
+    el.addEventListener('click', (e) => { if (at(e)) { chosen = +at(e).dataset.i; light(chosen); } });
+  });
+  root.querySelector('.setting__map').addEventListener('pointerleave', () => light(chosen));
+  legend.addEventListener('pointerleave', () => light(chosen));
+  light(chosen);
   root.querySelector('.setting__facts dl').innerHTML = locationRows().map(([k, v]) => `<div><dt>${k}</dt><dd>${v}</dd></div>`).join('');
 }
 
@@ -112,18 +122,23 @@ export function locationRows() {
   return rows;
 }
 
-/* ---------------- A day at Serra ---------------- */
+/* ---------------- A day at Serra ----------------
+   Four moments read left to right along one line, morning to evening. Each photograph opens larger. */
 export function initRhythm() {
   const list = document.querySelector('.rhythm__list');
+  const items = RHYTHM.map((r) => ({ src: MEDIA[r.key], name: `${r.when}: ${r.name}`, text: r.text }));
   list.innerHTML = RHYTHM.map((r, i) => `
     <li class="rhythm__item rhythm__item--${i + 1}">
-      <figure class="rhythm__frame" data-reveal="image-soft"><img src="${MEDIA[r.key]}" alt="${r.alt}" loading="lazy" decoding="async" /></figure>
+      <p class="rhythm__when">${r.when}</p>
+      <figure class="rhythm__frame" data-reveal="image-soft">
+        <button type="button" class="rhythm__open" data-i="${i}"><img src="${MEDIA[r.key]}" alt="${r.alt}" loading="lazy" decoding="async" /><span class="sr-only">Open photograph: ${r.name}</span></button>
+      </figure>
       <div class="rhythm__text">
-        <p class="rhythm__when">${r.when}</p>
         <h4>${r.name}</h4>
         <p>${r.text}</p>
       </div>
     </li>`).join('');
+  list.querySelectorAll('.rhythm__open').forEach((b) => b.addEventListener('click', () => openLightbox(items, +b.dataset.i)));
 }
 
 /* ---------------- Stay enquiry (concept: nothing is sent) ---------------- */

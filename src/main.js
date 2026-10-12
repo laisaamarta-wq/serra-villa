@@ -51,8 +51,26 @@ const headerState = () => {
   if (header.dataset.state !== state) header.dataset.state = state;
 };
 
+/* ---------- header: the link for the chapter being read is marked ---------- */
+// Architecture belongs to "The villa"; Life at Serra to "Setting"; the enquiry has its own button.
+const chapters = { villa: 'villa', concept: 'villa', plans: 'plans', materials: 'materials', making: 'making', location: 'location', life: 'location' };
+const navLinks = [...document.querySelectorAll('.header__nav a')];
+const markCurrent = () => {
+  const mid = window.innerHeight * 0.45;
+  let id = null;
+  for (const key of Object.keys(chapters)) {
+    const r = document.getElementById(key).getBoundingClientRect();
+    if (r.top <= mid && r.bottom > mid) { id = chapters[key]; break; }
+  }
+  navLinks.forEach((a) => {
+    const on = a.getAttribute('href') === `#${id}`;
+    a.classList.toggle('is-current', on);
+    if (on) a.setAttribute('aria-current', 'true'); else a.removeAttribute('aria-current');
+  });
+};
+
 let ticking = false;
-const frame = () => { ticking = false; filmPlayer.update(); updateConcept(); updateParallax(); headerState(); };
+const frame = () => { ticking = false; filmPlayer.update(); updateConcept(); updateParallax(); headerState(); markCurrent(); };
 const request = () => { if (!ticking) { ticking = true; requestAnimationFrame(frame); } };
 window.addEventListener('scroll', request, { passive: true });
 window.addEventListener('resize', request);

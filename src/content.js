@@ -33,10 +33,10 @@ export const MEDIA = {
   bay: u('14507a27-9e86-4d3d-af05-2b5861b68389'), // the bay below the pool terrace
   // social sharing preview (1200 x 630)
   og: u('ac0a81d0-b534-4f79-ba93-4a38dbceb0f8', 'jpg'),
-  // aerial film for the location chapter: approaches the villa and pulls away again
+  // aerial film for the location chapter: flies in and settles on the villa (plays once, no loop)
   hero: {
-    desktop: u('469f8d69-ebc6-4c69-919e-525342a976f7', 'mp4'),
-    mobile: u('3ba65265-8fa1-4348-b116-b54d95fdc576', 'mp4'),
+    desktop: u('4090c74f-a5d0-444b-8802-6da67ca87fd6', 'mp4'),
+    mobile: u('b17078c7-f1e2-412a-9234-4926ca6f18aa', 'mp4'),
     poster: u('4cc25c34-2537-4b89-b083-2a4d61f2722f', 'jpg'),
     posterMobile: u('9673ec20-6339-4635-8596-275e7d23ce53', 'jpg'),
   },

@@ -125,7 +125,8 @@ export function initFilm() {
 }
 
 /* ---------------- The ridge: aerial film in the location chapter ----------------
-   Approaches the villa and pulls away again. Loads near the section, plays while in view. */
+   The camera flies in toward the villa once, easing to a stop, and holds there. No loop and no
+   pull-back. Loads near the section and plays while in view; the button replays it. */
 export function initAerial() {
   const root = document.querySelector('.location__hero');
   const video = root.querySelector('.location__video');
@@ -133,10 +134,11 @@ export function initAerial() {
   const label = toggle.querySelector('.sr-only');
   const phone = isPhone();
   video.poster = phone ? MEDIA.hero.posterMobile : MEDIA.hero.poster;
-  let loaded = false; let inView = false; let userPaused = reducedMotion();
+  let loaded = false; let inView = false; let userPaused = reducedMotion(); let ended = false;
   const setState = (playing) => {
     toggle.setAttribute('aria-pressed', String(!playing));
-    label.textContent = playing ? 'Pause the aerial film' : 'Play the aerial film';
+    toggle.classList.toggle('is-ended', ended && !playing);
+    label.textContent = playing ? 'Pause the aerial film' : ended ? 'Watch the aerial film again' : 'Play the aerial film';
   };
   const ensure = () => { if (!loaded) { loaded = true; video.src = phone ? MEDIA.hero.mobile : MEDIA.hero.desktop; } };
   const play = () => { ensure(); const p = video.play(); if (p && p.then) p.then(() => setState(true)).catch(() => setState(false)); };
@@ -145,10 +147,13 @@ export function initAerial() {
   new IntersectionObserver(([e]) => { if (e.isIntersecting) ensure(); }, { rootMargin: '500px 0px' }).observe(root);
   new IntersectionObserver(([e]) => {
     inView = e.intersectionRatio >= 0.35;
-    if (inView && !userPaused) play();
+    if (inView && !userPaused && !ended) play();
     else if (!inView && !video.paused) { video.pause(); setState(false); }
   }, { threshold: [0, 0.35, 0.6] }).observe(root);
+  // the film settles on the villa and stays on that frame
+  video.addEventListener('ended', () => { ended = true; setState(false); });
   toggle.addEventListener('click', () => {
+    if (ended) { ended = false; userPaused = false; video.currentTime = 0; play(); return; }
     if (video.paused) { userPaused = false; play(); } else { userPaused = true; video.pause(); setState(false); }
   });
   video.addEventListener('error', () => root.classList.add('is-fallback'));
