@@ -109,12 +109,15 @@ export function initPlan() {
     el.empty.hidden = true; el.photo.classList.remove('is-empty'); el.detail.hidden = false;
     el.caption.textContent = caption;
     const src = MEDIA[key];
-    if (el.imgs[front].getAttribute('src') === src) return;
+    if (el.imgs[front].getAttribute('src') === src) { want = src; el.imgs[front].classList.add('is-on'); el.imgs[1 - front].classList.remove('is-on'); return; }
     want = src;
     const back = el.imgs[1 - front];
+    let swapped = false;
     const swapIn = () => {
-      if (want !== src) return;
-      back.alt = alt; back.classList.add('is-on'); el.imgs[front].classList.remove('is-on'); front = 1 - front;
+      // a cached image can report loaded twice (complete now, onload later): swap only once
+      if (swapped || want !== src) return;
+      swapped = true; back.onload = null;
+      back.alt = alt; back.classList.add('is-on'); el.imgs[1 - el.imgs.indexOf(back)].classList.remove('is-on'); front = el.imgs.indexOf(back);
     };
     back.onload = swapIn;
     back.src = src;
