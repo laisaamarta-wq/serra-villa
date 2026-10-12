@@ -26,11 +26,11 @@ export const MEDIA = {
   suite: u('828c5f91-45d0-4ceb-8894-9ba9c19e4b62'),
   guest1: u('94c4d7e7-b503-42cf-baa4-fa19c108382d'),
   guest2: u('f6e99113-e490-4346-828b-cfb2ed1e753a'),
-  // frames of the walk-through film, so the stills and the film show the same house
-  stair: u('548daae7-d5e5-41e7-86e4-39f5e8c5c442', 'jpg'), // the lit stair from the entrance hall
-  pergolaTable: u('4ad3db7c-29f6-4e4d-91fe-8c1b225f5e33'), // the long table under the pergola
-  poolEdge: u('24819d34-07e5-4f1e-911f-6137c831693d'), // the pool at the level of the terrace
-  bay: u('f5360065-4341-42fb-8cf8-7da3db935ea1'), // the bay below the pool terrace
+  // views from the walk-through film, re-rendered as sharp 2400 px photographs (same framing as the film)
+  stair: u('fce1b988-fdef-466b-8740-c11d4668b5db'), // the lit stair from the entrance hall
+  pergolaTable: u('3ef90441-897b-4e29-9ff0-3979b1d802a2'), // the long table under the pergola
+  poolEdge: u('e879393c-e1c2-4c1c-a552-d9e4927915ab'), // the pool at the level of the terrace
+  bay: u('14507a27-9e86-4d3d-af05-2b5861b68389'), // the bay below the pool terrace
   // social sharing preview (1200 x 630)
   og: u('ac0a81d0-b534-4f79-ba93-4a38dbceb0f8', 'jpg'),
   // aerial film for the location chapter: approaches the villa and pulls away again
