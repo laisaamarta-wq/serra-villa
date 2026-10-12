@@ -6,7 +6,6 @@ const CDN = 'https://d2ol7oe51mr4n9.cloudfront.net/user_3C15E03naKYn0k12cqxNShlI
 const u = (id, ext = 'webp') => `${CDN}${id}.${ext}`;
 
 export const MEDIA = {
-  studio: u('bf9f0e23-8548-4397-a428-56177eadcd2e'),
   s0: u('7ca677f9-9440-41aa-9110-d000e28f54b5'),
   master: u('9113bcd8-9a90-4603-8253-56ce21bc4680'),
   reveal: u('40171492-a905-444f-ba96-ea2d01777131'),
@@ -22,8 +21,13 @@ export const MEDIA = {
   matOak: u('bdf89346-3571-45e6-9bae-a3b3e54fdadd'),
   matLinen: u('bb614efd-c32a-4c80-9f06-6d25fec29c95'),
   matWater: u('5c89cba5-1b82-4d3e-9c89-64c2a016a891'),
-  // a frame of the walk-through: the lit stair from the entrance hall down to the living floor
-  stair: u('548daae7-d5e5-41e7-86e4-39f5e8c5c442', 'jpg'),
+  // frames of the walk-through film, so the stills and the film show the same house
+  stair: u('548daae7-d5e5-41e7-86e4-39f5e8c5c442', 'jpg'), // the lit stair from the entrance hall
+  pergolaTable: u('4ad3db7c-29f6-4e4d-91fe-8c1b225f5e33'), // the long table under the pergola
+  poolEdge: u('24819d34-07e5-4f1e-911f-6137c831693d'), // the pool at the level of the terrace
+  bay: u('f5360065-4341-42fb-8cf8-7da3db935ea1'), // the bay below the pool terrace
+  // social sharing preview (1200 x 630)
+  og: u('ac0a81d0-b534-4f79-ba93-4a38dbceb0f8', 'jpg'),
   // aerial film for the location chapter: approaches the villa and pulls away again
   hero: {
     desktop: u('469f8d69-ebc6-4c69-919e-525342a976f7', 'mp4'),
@@ -36,9 +40,10 @@ export const MEDIA = {
     desktop: u('a541291c-b778-4cd7-9207-ced4c57997d6', 'mp4'),
     mobile: u('f357428e-e898-4a2a-8d9d-a44a9b83b27e', 'mp4'),
   },
+  // construction visualisation (letterbox removed; 1440 px for desktop, 960 px for phones)
   making: {
-    desktop: u('920dc112-7ef9-471c-9f51-fd7cbc8b81c8', 'mp4'),
-    mobile: u('19390fa8-7b31-4fff-8e08-85b3e9579868', 'mp4'),
+    desktop: u('2d949888-dce0-4260-87ff-286df005a492', 'mp4'),
+    mobile: u('3a61c9bf-af56-4c58-b898-a9020673fa70', 'mp4'),
   },
 };
 
@@ -92,14 +97,45 @@ export const MATERIALS = [
   { key: 'matWater', context: 'day', name: 'Water', where: 'Pool terrace', text: 'A 28-metre edge that spills over the stone and seems to run into the bay.' },
 ];
 
-// Places near Serra, from the concept brief. Kept as data; the page now mentions them in one line
-// in the location chapter and the airport time in the stay section.
-export const PLACES = [
-  { id: 'serra', place: 'Serra', how: 'At the end of a private road, 140 m above the water', at: [298, 342] },
-  { id: 'cove', place: 'Swimming cove', how: '600 m on a stone path', at: [176, 436] },
-  { id: 'village', place: 'Village and harbour', how: '1.2 km, ten minutes by bicycle', at: [522, 262] },
-  { id: 'marina', place: 'Marina', how: '2.5 km', at: [560, 246] },
-  { id: 'airport', place: 'International airport', how: '45 minutes by car', at: null },
+// ---------------- Location ----------------
+// Serra is a concept property and its real-world location has not been confirmed.
+// Nothing destination-specific is published until `confirmed` is true: fill in the region,
+// country and the nearby places (with checked distances), then set `confirmed: true`.
+export const LOCATION = {
+  confirmed: false,
+  coast: 'Mediterranean',
+  region: '', // e.g. 'Amalfi Coast'
+  country: '', // e.g. 'Italy'
+  locality: '', // optional: the nearest town, if it is safe to publish
+  setting: 'A wooded ridge above a sheltered bay, 140 m above the water',
+  access: 'At the end of a private road',
+  disclosure: 'Shared with guests once a stay is confirmed',
+  // shown only when `confirmed` is true; these were concept placeholders and must be checked
+  nearby: [
+    { place: 'Swimming cove', how: '600 m on a stone path' },
+    { place: 'Village and harbour', how: '1.2 km' },
+    { place: 'Marina', how: '2.5 km' },
+    { place: 'International airport', how: '45 minutes by car' },
+  ],
+};
+
+// What the aerial photograph shows, marked on it. Positions are % of the image (x, y).
+// These describe the picture, not a map: no distances or directions are implied.
+export const SETTING_MARKS = [
+  { x: 35, y: 52, name: 'The house', text: 'Two long travertine levels set into the slope, every room facing the water.' },
+  { x: 44, y: 66, name: 'The pool terrace', text: 'The 28-metre pool runs out to where the cliff begins.' },
+  { x: 14, y: 78, name: 'Pines and olives', text: 'The hillside was kept as it was found; the garden grows into it.' },
+  { x: 68, y: 38, name: 'The village across the bay', text: 'White houses on the far shore, in view from the terraces.' },
+  { x: 80, y: 47, name: 'The harbour', text: 'Boats moored in the curve of the bay below the village.' },
+  { x: 47, y: 9, name: 'The mountains behind', text: 'A wall of hills closes the view inland and shelters the house.' },
+];
+
+// A day at Serra, told through rooms that face the light at different hours.
+export const RHYTHM = [
+  { when: 'Morning', key: 'bath', name: 'The stone bath', text: 'A tub carved from one piece of stone, set where the pines frame the water.', alt: 'The stone bath, open to the pines and the sea' },
+  { when: 'Midday', key: 'garden', name: 'The olive garden', text: 'Old olive trees kept in place during construction, with limestone steps laid by hand between them.', alt: 'Olive trees and hand-laid limestone steps in the garden' },
+  { when: 'Afternoon', key: 'poolEdge', name: 'The long pool', text: 'The water lies level with the travertine, so a swim runs straight toward the bay.', alt: 'The infinity pool level with the travertine terrace' },
+  { when: 'Evening', key: 'pergolaTable', name: 'Under the pergola', text: 'The long oak table on the upper terrace, as the light turns gold over the bay.', alt: 'The long dining table under the slatted oak pergola at sunset' },
 ];
 
 // Floor plan, drawn at 28 units per metre; areas are computed from the geometry.

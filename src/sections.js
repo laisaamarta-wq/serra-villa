@@ -1,4 +1,4 @@
-import { MEDIA, SPECS, MATERIALS } from './content.js';
+import { MEDIA, SPECS, MATERIALS, LOCATION, SETTING_MARKS, RHYTHM } from './content.js';
 import { onceVisible, countUp, reducedMotion } from './motion.js';
 import { openLightbox } from './lightbox.js';
 
@@ -82,6 +82,50 @@ export function initLight() {
   }, '0px 0px -35% 0px');
 }
 
+/* ---------------- The setting: what the aerial photograph shows ----------------
+   Numbered markers on the photograph and a matching legend; pointing at either lights both.
+   The location panel publishes only what LOCATION says is confirmed. */
+export function initSetting() {
+  const root = document.querySelector('.setting');
+  const pins = root.querySelector('.setting__pins');
+  const legend = root.querySelector('.setting__legend');
+  pins.innerHTML = SETTING_MARKS.map((m, i) => `<li style="--x:${m.x}%;--y:${m.y}%" data-i="${i}"><span>${i + 1}</span></li>`).join('');
+  legend.innerHTML = SETTING_MARKS.map((m, i) => `<li data-i="${i}"><span class="setting__n">${i + 1}</span><h4>${m.name}</h4><p>${m.text}</p></li>`).join('');
+  const all = [...pins.children, ...legend.children];
+  const light = (i) => all.forEach((el) => el.classList.toggle('is-lit', el.dataset.i === String(i)));
+  const from = (e) => { const li = e.target.closest('li[data-i]'); if (li) light(li.dataset.i); };
+  [pins, legend].forEach((el) => el.addEventListener('pointerover', from));
+  legend.addEventListener('click', from); // a tap on a phone lights the marker too
+  root.addEventListener('pointerleave', () => light(-1));
+  root.querySelector('.setting__facts dl').innerHTML = locationRows().map(([k, v]) => `<div><dt>${k}</dt><dd>${v}</dd></div>`).join('');
+}
+
+// the location facts that may be published, in reading order
+export function locationRows() {
+  const L = LOCATION;
+  const rows = [['Coast', L.coast]];
+  if (L.confirmed && L.region) rows.push(['Region', [L.region, L.country].filter(Boolean).join(', ')]);
+  if (L.confirmed && L.locality) rows.push(['Nearest town', L.locality]);
+  rows.push(['Setting', L.setting], ['Access', L.access]);
+  if (L.confirmed) L.nearby.forEach((n) => rows.push([n.place, n.how]));
+  else rows.push(['Exact location', L.disclosure]);
+  return rows;
+}
+
+/* ---------------- A day at Serra ---------------- */
+export function initRhythm() {
+  const list = document.querySelector('.rhythm__list');
+  list.innerHTML = RHYTHM.map((r, i) => `
+    <li class="rhythm__item rhythm__item--${i + 1}">
+      <figure class="rhythm__frame" data-reveal="image-soft"><img src="${MEDIA[r.key]}" alt="${r.alt}" loading="lazy" decoding="async" /></figure>
+      <div class="rhythm__text">
+        <p class="rhythm__when">${r.when}</p>
+        <h4>${r.name}</h4>
+        <p>${r.text}</p>
+      </div>
+    </li>`).join('');
+}
+
 /* ---------------- Stay enquiry (concept: nothing is sent) ---------------- */
 export function initStay() {
   const form = document.querySelector('.form');
@@ -97,6 +141,11 @@ export function initStay() {
     f.departure.min = iso(next);
     if (f.departure.value && f.departure.value <= f.arrival.value) f.departure.value = '';
   });
+  const facts = document.querySelector('.stay__facts');
+  // the same verified figures as the key facts at the top of the page
+  const spec = (label) => { const x = SPECS.find((v) => v.label === label); return `${x.group ? x.count.toLocaleString('en-GB') : x.count}${x.suffix ? ' ' + x.suffix : ''}`; };
+  const rows = [['Suites', spec('Suites')], ['Levels', spec('Levels')], ['Interior', spec('Interior')], ['Infinity pool', spec('Infinity pool')], ['Location', LOCATION.confirmed && LOCATION.region ? [LOCATION.region, LOCATION.country].filter(Boolean).join(', ') : `${LOCATION.coast} coast; exact location ${LOCATION.disclosure.charAt(0).toLowerCase()}${LOCATION.disclosure.slice(1)}`]];
+  facts.innerHTML = rows.map(([k, v]) => `<div><dt>${k}</dt><dd>${v}</dd></div>`).join('');
   const fmt = (v) => new Date(v + 'T12:00:00').toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' });
 
   form.addEventListener('submit', (e) => {

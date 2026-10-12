@@ -9,7 +9,7 @@ import { initReveals, initParallax, reducedMotion } from './motion.js';
 import { initFilm, initMaking, initAerial } from './films.js';
 import { initLightbox } from './lightbox.js';
 import { initPlan } from './plan.js';
-import { initImages, initSpecs, initMaterials, initLight, initStay } from './sections.js';
+import { initImages, initSpecs, initMaterials, initLight, initStay, initSetting, initRhythm } from './sections.js';
 import { initConcept } from './axon.js';
 
 document.documentElement.classList.add('js');
@@ -34,7 +34,9 @@ initPlan();
 initMaterials();
 initMaking();
 initLight();
+initRhythm();
 initAerial();
+initSetting();
 initStay();
 initReveals();
 const updateParallax = initParallax();
