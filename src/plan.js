@@ -61,44 +61,39 @@ function drawLevel(key) {
   return g;
 }
 
+// a small drawing of one room inside its level: used where a room has no photograph
+function roomSketch(level, id, { pad = 60, labels = true } = {}) {
+  const L = PLAN[level]; const r = L.rooms.find((x) => x.id === id);
+  const vb = [r.x - pad, r.y - pad, r.w + pad * 2, r.h + pad * 2];
+  const others = L.rooms.filter((x) => x.id !== id).map((x) => `<rect x="${x.x}" y="${x.y}" width="${x.w}" height="${x.h}" class="k-other"/>`).join('');
+  const fs = (vb[2] / 20).toFixed(1);
+  const wM = (r.w / UNITS_PER_M).toFixed(1); const hM = (r.h / UNITS_PER_M).toFixed(1);
+  const hatch = Array.from({ length: Math.ceil((r.w + r.h) / 14) }, (_, i) => `<line x1="${r.x + i * 14}" y1="${r.y}" x2="${r.x + i * 14 - r.h}" y2="${r.y + r.h}"/>`).join('');
+  const dims = labels ? `<path class="k-dim" d="M${r.x},${r.y - 22} L${r.x + r.w},${r.y - 22} M${r.x},${r.y - 28} L${r.x},${r.y - 16} M${r.x + r.w},${r.y - 28} L${r.x + r.w},${r.y - 16}"/>`
+    + `<text x="${r.x + r.w / 2}" y="${r.y - 30}" text-anchor="middle" font-size="${fs}">${wM} m</text>`
+    + `<path class="k-dim" d="M${r.x + r.w + 22},${r.y} L${r.x + r.w + 22},${r.y + r.h} M${r.x + r.w + 16},${r.y} L${r.x + r.w + 28},${r.y} M${r.x + r.w + 16},${r.y + r.h} L${r.x + r.w + 28},${r.y + r.h}"/>`
+    + `<text x="${r.x + r.w + 32}" y="${r.y + r.h / 2 + 5}" font-size="${fs}">${hM} m</text>` : '';
+  const clip = `k${level}${id}${labels ? 'l' : 's'}`;
+  return `<svg viewBox="${vb.join(' ')}" preserveAspectRatio="xMidYMid meet" aria-hidden="true"><defs><clipPath id="${clip}"><rect x="${r.x}" y="${r.y}" width="${r.w}" height="${r.h}"/></clipPath></defs>${others}<g class="k-hatch" clip-path="url(#${clip})">${hatch}</g><rect x="${r.x}" y="${r.y}" width="${r.w}" height="${r.h}" class="k-room"/>${dims}</svg>`;
+}
+
+/* ---------------- Explore the villa: plan, photograph and room strip ----------------
+   The plan is the tool, the photograph is the subject. Choosing a room on the plan, in the
+   strip or with the arrow keys updates the plan highlight, photograph and text together. */
 export function initPlan() {
   const section = document.querySelector('.plans');
   const svg = section.querySelector('.plans__svg');
   const canvas = section.querySelector('.plans__canvas');
   const tabs = [...section.querySelectorAll('[role="tab"]')];
-  const info = section.querySelector('.plans__info');
+  const view$ = section.querySelector('.atlas__view');
   const el = {
-    level: info.querySelector('.plans__level'), room: info.querySelector('.plans__room'), area: info.querySelector('.plans__area'),
-    note: info.querySelector('.plans__note'), photo: info.querySelector('.plans__photo'), list: info.querySelector('.plans__list'),
-    detail: info.querySelector('.plans__detail'), back: info.querySelector('.plans__back'),
-    caption: info.querySelector('.plans__caption'), empty: info.querySelector('.plans__empty'),
-    tbLevel: section.querySelector('.plans__tb-level'), tbSheet: section.querySelector('.plans__tb-sheet'),
+    photo: section.querySelector('.atlas__photo'), imgs: [...section.querySelectorAll('.atlas__img')], empty: section.querySelector('.atlas__empty'),
+    caption: section.querySelector('.atlas__caption'), detail: section.querySelector('.atlas__detail'),
+    num: section.querySelector('.atlas__num'), level: section.querySelector('.atlas__level'), room: section.querySelector('.atlas__room'),
+    area: section.querySelector('.atlas__area'), note: section.querySelector('.atlas__note'), back: section.querySelector('.atlas__back'),
+    strip: section.querySelector('.atlas__rooms'), prev: section.querySelector('[data-step="-1"]'), next: section.querySelector('[data-step="1"]'),
+    tbLevel: section.querySelector('.plans__tb-level'), tbSheet: section.querySelector('.plans__tb-sheet'), info: section.querySelector('.atlas__info'),
   };
-  const photoImg = el.photo.querySelector('img');
-  const emptySvg = el.empty.querySelector('svg');
-  // fade each new photograph in once it has loaded, so the panel never flashes empty
-  photoImg.addEventListener('load', () => el.photo.classList.remove('is-loading'));
-  const showPhoto = (key, name) => {
-    el.empty.hidden = true; el.photo.hidden = false;
-    el.caption.textContent = name;
-    if (photoImg.getAttribute('src') === MEDIA[key]) return;
-    el.photo.classList.add('is-loading');
-    photoImg.src = MEDIA[key]; photoImg.alt = name;
-  };
-  // a room without a photograph: draw it on its own, with its measured size
-  const showEmpty = (r) => {
-    el.photo.hidden = true; el.empty.hidden = false;
-    const s = Math.min(240 / r.w, 140 / r.h); const w = r.w * s; const h = r.h * s; const x = (300 - w) / 2; const y = (200 - h) / 2 + 6;
-    const wM = (r.w / UNITS_PER_M).toFixed(1); const hM = (r.h / UNITS_PER_M).toFixed(1);
-    emptySvg.innerHTML = `<rect x="${x}" y="${y}" width="${w}" height="${h}" class="e-room"/>`
-      + `<path class="e-dim" d="M${x},${y - 14} L${x + w},${y - 14} M${x},${y - 19} L${x},${y - 9} M${x + w},${y - 19} L${x + w},${y - 9}"/>`
-      + `<text x="${x + w / 2}" y="${y - 20}" text-anchor="middle">${wM} m</text>`
-      + `<path class="e-dim" d="M${x + w + 14},${y} L${x + w + 14},${y + h} M${x + w + 9},${y} L${x + w + 19},${y} M${x + w + 9},${y + h} L${x + w + 19},${y + h}"/>`
-      + `<text x="${x + w + 24}" y="${y + h / 2 + 4}">${hM} m</text>`;
-  };
-  // every photograph on the current level, for the gallery
-  const levelPhotos = () => [{ src: MEDIA.reveal, name: 'Serra from the air', text: 'Both levels, set into the slope above the bay.' }]
-    .concat(PLAN[level].rooms.filter((r) => ROOM_PHOTOS[r.id]).map((r) => ({ src: MEDIA[ROOM_PHOTOS[r.id].key], name: ROOM_PHOTOS[r.id].detail ? `${r.name}: ${ROOM_PHOTOS[r.id].detail}` : r.name, text: r.text, id: r.id })));
   const scaleBar = section.querySelector('.plans__scale i');
 
   const levels = { terrace: drawLevel('terrace'), pool: drawLevel('pool') };
@@ -107,6 +102,34 @@ export function initPlan() {
 
   let level = 'terrace';
   let selected = null;
+
+  // ---------- photograph: two layers cross-fade, so the panel never flashes empty ----------
+  let front = 0; let want = '';
+  const showPhoto = (key, caption, alt) => {
+    el.empty.hidden = true; el.photo.classList.remove('is-empty'); el.detail.hidden = false;
+    el.caption.textContent = caption;
+    const src = MEDIA[key];
+    if (el.imgs[front].getAttribute('src') === src) return;
+    want = src;
+    const back = el.imgs[1 - front];
+    const swapIn = () => {
+      if (want !== src) return;
+      back.alt = alt; back.classList.add('is-on'); el.imgs[front].classList.remove('is-on'); front = 1 - front;
+    };
+    back.onload = swapIn;
+    back.src = src;
+    if (back.complete && back.naturalWidth) swapIn();
+  };
+  const showEmpty = (r) => {
+    want = '';
+    el.imgs.forEach((im) => im.classList.remove('is-on'));
+    el.photo.classList.add('is-empty'); el.empty.hidden = false; el.detail.hidden = true;
+    el.empty.querySelector('.atlas__sketch').innerHTML = roomSketch(level, r.id);
+    el.caption.textContent = `${r.name}, drawn from the plan`;
+  };
+  // every photograph on the current level, for the detail view
+  const levelPhotos = () => [{ src: MEDIA.reveal, name: 'Serra from the air', text: 'Both levels, set into the slope above the bay.' }]
+    .concat(PLAN[level].rooms.filter((r) => ROOM_PHOTOS[r.id]).map((r) => ({ src: MEDIA[ROOM_PHOTOS[r.id].key], name: ROOM_PHOTOS[r.id].detail ? `${r.name}: ${ROOM_PHOTOS[r.id].detail}` : r.name, text: r.text, id: r.id })));
 
   // ---------- view box: zoom and pan ----------
   const view = { s: 1, cx: W / 2, cy: H / 2 };
@@ -146,7 +169,7 @@ export function initPlan() {
     if (!drag || e.pointerId !== drag.id) return;
     const dx = e.clientX - drag.x; const dy = e.clientY - drag.y;
     if (!drag.moved && Math.hypot(dx, dy) < 5) return;
-    if (!drag.moved) { drag.moved = true; svg.setPointerCapture(e.pointerId); canvas.classList.add('is-dragging'); }
+    if (!drag.moved) { drag.moved = true; try { svg.setPointerCapture(e.pointerId); } catch (_) { /* pointer gone */ } canvas.classList.add('is-dragging'); }
     const k = W / view.s / svg.getBoundingClientRect().width;
     cancelAnimationFrame(anim);
     view.cx = drag.cx - dx * k; view.cy = drag.cy - dy * k; apply();
@@ -154,54 +177,79 @@ export function initPlan() {
   const endDrag = () => { if (drag && drag.moved) setTimeout(() => { drag = null; }, 0); else drag = null; canvas.classList.remove('is-dragging'); };
   svg.addEventListener('pointerup', endDrag); svg.addEventListener('pointercancel', endDrag);
 
-  // ---------- information panel ----------
+  // ---------- information ----------
+  const swap = () => { el.info.classList.remove('is-swap'); void el.info.offsetWidth; el.info.classList.add('is-swap'); };
   const showLevelInfo = () => {
     const L = PLAN[level];
+    el.num.textContent = level === 'terrace' ? '01' : '02';
     el.level.textContent = level === 'terrace' ? 'Upper level' : 'Lower level';
     el.room.textContent = L.title;
     el.area.textContent = `${L.rooms.length} spaces on this level`;
     el.note.textContent = L.summary; el.back.hidden = true;
-    showPhoto('reveal', 'Serra from the air: both levels on the slope');
+    showPhoto('reveal', 'Serra from the air: both levels on the slope', 'Serra from the air, both levels on the slope above the bay');
   };
-  const swap = () => { el.detail.classList.remove('is-swap'); void el.detail.offsetWidth; el.detail.classList.add('is-swap'); };
-  const select = (id, { focusPlan = false } = {}) => {
+  const stripBtns = () => [...el.strip.querySelectorAll('button')];
+  const select = (id, { focusPlan = true, scrollStrip = true } = {}) => {
     const L = PLAN[level];
     const r = L.rooms.find((x) => x.id === id);
     selected = r ? id : null;
     svg.querySelectorAll('.room, .badge').forEach((n) => { const on = n.dataset.room === selected; n.classList.toggle('is-selected', on); if (n.classList.contains('room')) n.setAttribute('aria-pressed', String(on)); });
     svg.classList.toggle('has-selection', !!selected);
-    el.list.querySelectorAll('button').forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.room === selected)));
+    stripBtns().forEach((b) => { const on = b.dataset.room === selected; b.setAttribute('aria-pressed', String(on)); if (on && scrollStrip) b.scrollIntoView({ block: 'nearest', inline: 'center', behavior: reducedMotion() ? 'auto' : 'smooth' }); });
     swap();
     if (!r) { showLevelInfo(); if (focusPlan) animateTo(1, W / 2, H / 2); return; }
     const i = L.rooms.indexOf(r);
-    el.level.textContent = `${String(i + 1).padStart(2, '0')}  ${L.title}`;
+    el.num.textContent = String(i + 1).padStart(2, '0');
+    el.level.textContent = L.title;
     el.room.textContent = r.name;
     el.area.textContent = `${area(r)} m²${r.outdoor ? ', outdoors' : ''}`;
     el.note.textContent = r.text;
     const ph = ROOM_PHOTOS[r.id];
-    if (ph) showPhoto(ph.key, ph.name); else showEmpty(r);
+    if (ph) showPhoto(ph.key, ph.name, `${r.name}: ${ph.name}`); else showEmpty(r);
     el.back.hidden = false;
-    if (focusPlan) animateTo(Math.max(view.s, 1.35), r.x + r.w / 2, r.y + r.h / 2);
+    if (focusPlan) animateTo(Math.max(view.s, 1.25), r.x + r.w / 2, r.y + r.h / 2);
   };
-  el.photo.querySelector('button').addEventListener('click', () => {
-    const list = levelPhotos();
-    openLightbox(list, Math.max(0, list.findIndex((x) => x.id === selected)));
+  const stepRoom = (d) => {
+    const rooms = PLAN[level].rooms;
+    const i = rooms.findIndex((x) => x.id === selected);
+    const n = i < 0 ? (d > 0 ? 0 : rooms.length - 1) : (i + d + rooms.length) % rooms.length;
+    select(rooms[n].id);
+  };
+  el.detail.addEventListener('click', () => { const list = levelPhotos(); openLightbox(list, Math.max(0, list.findIndex((x) => x.id === selected))); });
+  el.photo.querySelector('.atlas__open').addEventListener('click', () => { if (!el.photo.classList.contains('is-empty')) el.detail.click(); });
+  el.back.addEventListener('click', () => select(null));
+  el.prev.addEventListener('click', () => stepRoom(-1));
+  el.next.addEventListener('click', () => stepRoom(1));
+  view$.addEventListener('keydown', (e) => {
+    if (e.target.closest('input, textarea')) return;
+    if (e.key === 'ArrowRight') { e.preventDefault(); stepRoom(1); }
+    if (e.key === 'ArrowLeft') { e.preventDefault(); stepRoom(-1); }
   });
-  el.back.addEventListener('click', () => { select(null, { focusPlan: true }); });
+  el.strip.addEventListener('keydown', (e) => {
+    const d = { ArrowRight: 1, ArrowLeft: -1 }[e.key]; if (!d) return;
+    e.preventDefault();
+    const btns = stripBtns(); const at = btns.indexOf(e.target.closest('button'));
+    if (at >= 0) select(btns[(at + d + btns.length) % btns.length].dataset.room); else stepRoom(d);
+    const b = el.strip.querySelector('[aria-pressed="true"]'); if (b) b.focus({ preventScroll: true });
+  });
 
   svg.addEventListener('click', (e) => {
     if (drag && drag.moved) return;
     const room = e.target.closest('.room');
-    if (room) select(room.dataset.room === selected ? null : room.dataset.room);
+    if (room) select(room.dataset.room === selected ? null : room.dataset.room, { focusPlan: false });
   });
   svg.addEventListener('keydown', (e) => {
     const room = e.target.closest('.room');
-    if (room && (e.key === 'Enter' || e.key === ' ')) { e.preventDefault(); select(room.dataset.room); }
+    if (room && (e.key === 'Enter' || e.key === ' ')) { e.preventDefault(); select(room.dataset.room, { focusPlan: false }); }
   });
 
-  const fillList = () => {
-    el.list.innerHTML = PLAN[level].rooms.map((r, i) => `<li><button type="button" data-room="${r.id}" aria-pressed="false"><span class="n">${String(i + 1).padStart(2, '0')}</span><span>${r.name}</span><span>${area(r)} m²</span></button></li>`).join('');
-    el.list.querySelectorAll('button').forEach((b) => b.addEventListener('click', () => select(b.dataset.room, { focusPlan: true })));
+  const fillStrip = () => {
+    el.strip.innerHTML = PLAN[level].rooms.map((r, i) => {
+      const ph = ROOM_PHOTOS[r.id];
+      const thumb = ph ? `<img src="${MEDIA[ph.key]}" alt="" loading="lazy" decoding="async" />` : `<span class="atlas__thumb-sketch">${roomSketch(level, r.id, { pad: 40, labels: false })}<em>No photograph yet</em></span>`;
+      return `<li><button type="button" data-room="${r.id}" aria-pressed="false"><span class="atlas__thumb">${thumb}</span><span class="atlas__tmeta"><span class="n">${String(i + 1).padStart(2, '0')}</span><span class="t">${r.name}</span><span class="a">${area(r)} m²</span></span></button></li>`;
+    }).join('');
+    stripBtns().forEach((b) => b.addEventListener('click', () => select(b.dataset.room, { scrollStrip: false })));
   };
 
   // ---------- levels ----------
@@ -212,8 +260,8 @@ export function initPlan() {
       t.setAttribute('aria-selected', String(on)); t.tabIndex = on ? 0 : -1;
       if (on) { canvas.setAttribute('aria-labelledby', t.id); if (focusTab) t.focus(); }
     });
+    section.style.setProperty('--tab', key === 'terrace' ? 0 : 1);
     Object.entries(levels).forEach(([k, g]) => { g.classList.toggle('is-current', k === key); g.setAttribute('aria-hidden', String(k !== key)); g.querySelectorAll('.room').forEach((r) => { r.tabIndex = k === key ? 0 : -1; }); });
-    // redraw the new level's lines
     const g = levels[key];
     g.classList.remove('draw-in');
     requestAnimationFrame(() => requestAnimationFrame(() => g.classList.add('draw-in')));
@@ -222,13 +270,15 @@ export function initPlan() {
     svg.querySelectorAll('.is-selected').forEach((n) => n.classList.remove('is-selected'));
     el.tbLevel.textContent = PLAN[key].title;
     el.tbSheet.textContent = `Drawing ${key === 'terrace' ? '01' : '02'} of 02`;
-    fillList(); swap(); showLevelInfo();
+    fillStrip(); swap(); showLevelInfo();
+    el.strip.scrollTo({ left: 0 });
     animateTo(1, W / 2, H / 2);
   };
   tabs.forEach((t, i) => {
     t.addEventListener('click', () => setLevel(t.dataset.level));
     t.addEventListener('keydown', (e) => {
       if (e.key !== 'ArrowRight' && e.key !== 'ArrowLeft') return;
+      e.stopPropagation();
       const n = tabs[(i + (e.key === 'ArrowRight' ? 1 : tabs.length - 1)) % tabs.length];
       setLevel(n.dataset.level, { focusTab: true });
     });

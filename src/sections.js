@@ -4,10 +4,6 @@ import { openLightbox } from './lightbox.js';
 
 const clamp = (v, a = 0, b = 1) => Math.min(b, Math.max(a, v));
 const pad = (n) => String(n).padStart(2, '0');
-const prepDraw = (root) => root.querySelectorAll('.draw').forEach((el) => {
-  const len = Math.ceil(el.getTotalLength ? el.getTotalLength() : 1000);
-  el.dataset.len = len; el.style.setProperty('--len', len);
-});
 
 /* images declared as data-src="<media key>" */
 export function initImages() {
@@ -24,93 +20,6 @@ export function initSpecs() {
   onceVisible(dl, () => {
     dl.querySelectorAll('.n').forEach((n, i) => setTimeout(() => countUp(n, SPECS[i].count, { group: SPECS[i].group }), i * 90));
   }, '0px 0px -12% 0px');
-}
-
-/* ---------------- Architecture: an interactive section drawing ----------------
-   The drawing is grouped by principle. As each principle on the right scrolls past, its
-   part of the drawing is drawn and lit; at the end the whole section stays visible.
-   On narrow screens and with reduced motion it is shown complete and static. */
-const SECTION = `
-  <defs>
-    <pattern id="earth" width="10" height="10" patternUnits="userSpaceOnUse" patternTransform="rotate(45)">
-      <line x1="0" y1="0" x2="0" y2="10" class="hatch"/>
-    </pattern>
-  </defs>
-  <g class="step" data-step="0">
-    <path class="earth" d="M0,108 L228,150 L228,232 L298,252 L298,334 L1010,358 L1046,440 L0,440 Z"/>
-    <path class="tree draw" d="M60,104 L60,84 M140,120 L140,98 M1090,436 L1090,420"/>
-    <circle class="tree draw" cx="60" cy="76" r="10"/><circle class="tree draw" cx="140" cy="90" r="10"/><circle class="tree draw" cx="1090" cy="412" r="9"/>
-    <text x="40" y="140">The ridge</text>
-  </g>
-  <g class="step" data-step="1">
-    <path class="ground draw" d="M0,108 L228,150 M228,232 L298,252 M298,334 L1010,358 L1028,392 L1046,440"/>
-    <rect class="mass draw" x="228" y="150" width="372" height="82"/>
-    <rect class="mass draw" x="298" y="252" width="522" height="82"/>
-    <text x="414" y="196" text-anchor="middle">Upper level</text>
-    <text x="559" y="298" text-anchor="middle">Lower level</text>
-  </g>
-  <g class="step" data-step="2">
-    <path class="glass draw" d="M600,158 L600,226 M820,262 L820,326"/>
-    <path class="deck draw" d="M600,232 L812,232 M820,334 L1010,334"/>
-    <path class="pool draw" d="M864,334 L864,352 L1006,352 L1006,334"/>
-    <path class="sea draw" d="M1046,440 L1200,440"/>
-    <path class="wave draw" d="M1070,452 q10,-6 20,0 t20,0 M1120,462 q10,-6 20,0 t20,0"/>
-    <text x="935" y="384" text-anchor="middle">28 m infinity pool</text>
-    <text x="1112" y="430">The bay</text>
-  </g>
-  <g class="step" data-step="3">
-    <path class="slab draw" d="M206,142 L712,142"/>
-    <path class="pergola draw" d="M600,150 L800,150 ${Array.from({ length: 11 }, (_, i) => `M${606 + i * 18},150 L${606 + i * 18},160`).join(' ')}"/>
-    <text x="440" y="128" text-anchor="middle">Roof slab</text>
-    <text x="700" y="186" text-anchor="middle">Pergola terrace</text>
-  </g>
-`;
-export function initConcept() {
-  const root = document.querySelector('.concept');
-  const svg = root.querySelector('.section-drawing');
-  svg.insertAdjacentHTML('beforeend', SECTION);
-  prepDraw(svg);
-  const study = root.querySelector('.concept__study');
-  const steps = [...svg.querySelectorAll('.step')];
-  const draws = steps.map((g) => [...g.querySelectorAll('.draw')]);
-  const items = [...root.querySelectorAll('.principles li')];
-  const narrow = window.matchMedia('(max-width: 960px)');
-  const isStatic = () => reducedMotion() || narrow.matches;
-  const shown = steps.map(() => -1);
-  const setStep = (k, p) => {
-    if (Math.abs(shown[k] - p) < 0.002) return;
-    shown[k] = p;
-    draws[k].forEach((el) => { el.style.strokeDashoffset = (el.dataset.len * (1 - p)).toFixed(1); });
-    steps[k].style.setProperty('--p', p.toFixed(3));
-  };
-  let state = null;
-  const setActive = (next) => {
-    if (next === state) return;
-    state = next;
-    root.classList.toggle('is-complete', next === 'all' || next === 'static');
-    items.forEach((li, i) => {
-      li.classList.toggle('is-on', next === 'all' || next === 'static' || i === next);
-      li.classList.toggle('is-past', typeof next === 'number' && i < next);
-    });
-    steps.forEach((g, k) => g.classList.toggle('is-lit', typeof next === 'number' && k === next + 1));
-  };
-  const update = () => {
-    if (isStatic()) { steps.forEach((g, k) => setStep(k, 1)); setActive('static'); return; }
-    if (state === 'static') state = null;
-    const vh = window.innerHeight; const r = study.getBoundingClientRect();
-    if (r.top > vh * 1.5 || r.bottom < -vh * 0.5) return;
-    setStep(0, clamp((vh * 0.95 - r.top) / (vh * 0.45)));
-    let active = -1;
-    items.forEach((li, i) => {
-      const b = li.getBoundingClientRect();
-      const p = clamp((vh * 0.78 - b.top) / (b.height * 0.85));
-      setStep(i + 1, p);
-      if (p > 0.02) active = i;
-    });
-    setActive(r.bottom < vh * 0.62 ? 'all' : active);
-  };
-  update();
-  return update;
 }
 
 /* ---------------- Materials in context ---------------- */
@@ -136,52 +45,41 @@ export function initMaterials() {
   grid.querySelectorAll('.mat__open').forEach((b) => b.addEventListener('click', () => openLightbox(items, +b.dataset.i)));
 }
 
-/* ---------------- Life at Serra: morning sun / evening sun ----------------
-   Two renders from the same viewpoint. The morning picture sits on top and is clipped
-   at the divider; drag, click or use the arrow keys to move it. */
-export function initCompare() {
-  const root = document.querySelector('.compare');
-  const handle = root.querySelector('.compare__handle');
-  let pos = 50; let drag = null;
-  const set = (v, { animate = false } = {}) => {
-    pos = clamp(v, 0, 100);
-    root.classList.toggle('is-animating', animate);
-    root.style.setProperty('--pos', `${pos.toFixed(2)}%`);
-    root.style.setProperty('--k', (pos / 100).toFixed(4));
-    handle.setAttribute('aria-valuenow', String(Math.round(pos)));
-    handle.setAttribute('aria-valuetext', pos >= 99.5 ? 'Morning sun' : pos <= 0.5 ? 'Evening sun' : `${Math.round(pos)}% morning sun, ${Math.round(100 - pos)}% evening sun`);
+/* ---------------- Life at Serra: one view, all day ----------------
+   The original time-of-day slider: the same view cross-fades from morning light through
+   golden hour to blue hour, with the time shown above the track. It plays through once
+   on arrival, then belongs to the visitor. */
+export function initLight() {
+  const el = document.querySelector('.life__light');
+  const range = el.querySelector('input'); const time = el.querySelector('.light__time');
+  const toMin = (h, m) => h * 60 + m;
+  const fmt = (min) => `${String(Math.floor(min / 60)).padStart(2, '0')}:${String(Math.round(min % 60)).padStart(2, '0')}`;
+  const set = (v) => {
+    el.style.setProperty('--day', clamp((50 - v) / 50).toFixed(3));
+    el.style.setProperty('--night', clamp((v - 50) / 50).toFixed(3));
+    const min = v <= 50 ? toMin(10, 40) + (toMin(19, 20) - toMin(10, 40)) * (v / 50) : toMin(19, 20) + (toMin(20, 45) - toMin(19, 20)) * ((v - 50) / 50);
+    const name = v < 30 ? 'morning light' : v < 70 ? 'golden hour' : 'blue hour';
+    time.textContent = `${fmt(min)}, ${name}`;
+    range.setAttribute('aria-valuetext', time.textContent);
   };
-  const at = (x) => { const r = root.getBoundingClientRect(); return ((x - r.left) / r.width) * 100; };
-  root.addEventListener('pointerdown', (e) => {
-    if (e.button !== 0) return;
-    drag = { id: e.pointerId, x: e.clientX, y: e.clientY, moved: false, touch: e.pointerType === 'touch' };
-    if (!drag.touch) { e.preventDefault(); try { root.setPointerCapture(e.pointerId); } catch (_) { /* pointer already gone */ } root.classList.add('is-dragging'); set(at(e.clientX), { animate: true }); handle.focus({ preventScroll: true }); }
-  });
-  root.addEventListener('pointermove', (e) => {
-    if (!drag || e.pointerId !== drag.id) return;
-    if (drag.touch && !drag.moved) {
-      // decide between a horizontal drag and a vertical page scroll
-      const dx = Math.abs(e.clientX - drag.x); const dy = Math.abs(e.clientY - drag.y);
-      if (dx < 6 && dy < 6) return;
-      if (dy > dx) { drag = null; return; }
-      drag.moved = true; try { root.setPointerCapture(e.pointerId); } catch (_) { /* pointer already gone */ } root.classList.add('is-dragging');
-    }
-    drag.moved = true;
-    set(at(e.clientX));
-  });
-  const end = (e) => {
-    if (!drag || (e && e.pointerId !== drag.id)) return;
-    if (drag.touch && !drag.moved && e && e.type === 'pointerup') set(at(e.clientX), { animate: true });
-    drag = null; root.classList.remove('is-dragging');
-  };
-  root.addEventListener('pointerup', end); root.addEventListener('pointercancel', end);
-  handle.addEventListener('keydown', (e) => {
-    const step = { ArrowLeft: -5, ArrowDown: -5, ArrowRight: 5, ArrowUp: 5, PageDown: -20, PageUp: 20 }[e.key];
-    if (step !== undefined) { e.preventDefault(); set(pos + step, { animate: true }); }
-    else if (e.key === 'Home') { e.preventDefault(); set(0, { animate: true }); }
-    else if (e.key === 'End') { e.preventDefault(); set(100, { animate: true }); }
-  });
+  let touched = false;
+  range.addEventListener('input', () => { touched = true; set(+range.value); });
+  range.addEventListener('pointerdown', () => { touched = true; });
   set(50);
+  if (reducedMotion()) return;
+  onceVisible(el, () => {
+    const keys = [[0, 50], [1500, 8], [3200, 92], [4600, 50]];
+    const t0 = performance.now();
+    const step = (now) => {
+      if (touched) return;
+      const t = now - t0; let i = 0; while (i < keys.length - 2 && t > keys[i + 1][0]) i++;
+      const [ta, va] = keys[i]; const [tb, vb] = keys[i + 1];
+      const k = clamp((t - ta) / (tb - ta)); const e = k * k * (3 - 2 * k);
+      const v = va + (vb - va) * e; range.value = v; set(v);
+      if (t < keys[keys.length - 1][0]) requestAnimationFrame(step);
+    };
+    setTimeout(() => requestAnimationFrame(step), 400);
+  }, '0px 0px -35% 0px');
 }
 
 /* ---------------- Stay enquiry (concept: nothing is sent) ---------------- */

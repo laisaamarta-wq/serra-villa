@@ -90,33 +90,41 @@
         <div class="concept__study">
           <figure class="concept__drawing">
             <div class="concept__sticky">
-              <svg class="section-drawing" viewBox="0 0 1200 460" role="img" aria-labelledby="section-title">
-                <title id="section-title">Schematic section through Serra: the upper level set back into the slope under a roof slab and pergola, the lower level with the pool at the cliff edge, and the bay below</title>
-              </svg>
-              <figcaption>Schematic section through the house, not to scale.</figcaption>
+              <div class="axon">
+                <svg class="axon__svg" role="group" aria-labelledby="axon-title">
+                  <title id="axon-title">Axonometric drawing of Serra: the pool level below and the terrace level set back into the slope above it, every room drawn to its plan size</title>
+                </svg>
+                <div class="axon__card" aria-live="polite">
+                  <span class="axon__k">Select a room</span>
+                  <strong class="axon__name">Every room, to scale</strong>
+                  <span class="axon__m">Hover or tap a room to see its area</span>
+                </div>
+              </div>
+              <figcaption>Axonometric drawn from the floor plan. Room areas are measured from the plan; heights are schematic.</figcaption>
             </div>
           </figure>
           <ol class="principles">
-            <li data-step="1"><span class="principles__n">01</span><h3>Follow the slope</h3><p>Two long levels step down the hillside instead of levelling it. The slope keeps the shape it had, with pines, limestone and wild rosemary right up to the walls.</p><span class="principles__mark">Shown in the drawing: the two levels and the ground line</span></li>
-            <li data-step="2"><span class="principles__n">02</span><h3>Face the bay</h3><p>Serra was drawn for one ridge above the sea. Glass walls open every room toward the water, and the 28-metre pool runs out to the cliff edge.</p><span class="principles__mark">Shown in the drawing: the glass, the terraces and the pool</span></li>
-            <li data-step="3"><span class="principles__n">03</span><h3>One line of roof</h3><p>A single thin roof slab carries the line of the ridge out toward the sea, with a slatted oak pergola over the upper terrace.</p><span class="principles__mark">Shown in the drawing: the roof slab and the pergola</span></li>
+            <li data-step="1"><span class="principles__n">01</span><h3>Follow the slope</h3><p>Two long levels step down the hillside instead of levelling it. The slope keeps the shape it had, with pines, limestone and wild rosemary right up to the walls.</p><span class="principles__mark">In the drawing: the terrace level steps back into the slope above the pool level</span></li>
+            <li data-step="2"><span class="principles__n">02</span><h3>Face the bay</h3><p>Serra was drawn for one ridge above the sea. Glass walls open every room toward the water, and the 28-metre pool runs out to the cliff edge.</p><span class="principles__mark">In the drawing: the glass fronts, the terraces and the pool</span></li>
+            <li data-step="3"><span class="principles__n">03</span><h3>One line of roof</h3><p>A single thin roof slab carries the line of the ridge out toward the sea, with a slatted oak pergola over the upper terrace.</p><span class="principles__mark">In the drawing: the roof slab and the pergola</span></li>
           </ol>
         </div>
       </section>
 
-      <!-- 03 Plans -->
+      <!-- 03 Plans: explore the villa -->
       <section class="plans" id="plans">
         <div class="plans__head">
           <p class="label"><span class="label__n">03</span>Plans</p>
-          <h2 class="headline" data-reveal="lines"><span>Walk the plan</span></h2>
-          <p class="plans__hint">Choose a level, then select a room on the drawing or in the list.</p>
+          <h2 class="headline" data-reveal="lines"><span>Explore the villa</span></h2>
+          <p class="plans__hint">Choose a level, then a room on the plan or in the strip below. The arrow keys move from room to room.</p>
+        </div>
+        <div class="atlas__levels" role="tablist" aria-label="Level">
+          <button role="tab" id="tab-terrace" aria-selected="true" aria-controls="plan-panel" data-level="terrace"><span>01</span>Terrace level</button>
+          <button role="tab" id="tab-pool" aria-selected="false" aria-controls="plan-panel" data-level="pool" tabindex="-1"><span>02</span>Pool level</button>
+          <i aria-hidden="true"></i>
         </div>
         <div class="plans__body">
           <div class="plans__sheet">
-            <div class="plans__tabs" role="tablist" aria-label="Level">
-              <button role="tab" id="tab-terrace" aria-selected="true" aria-controls="plan-panel" data-level="terrace"><span>01</span>Terrace level</button>
-              <button role="tab" id="tab-pool" aria-selected="false" aria-controls="plan-panel" data-level="pool" tabindex="-1"><span>02</span>Pool level</button>
-            </div>
             <div class="plans__canvas" id="plan-panel" role="tabpanel" aria-labelledby="tab-terrace">
               <svg class="plans__svg" viewBox="0 0 1000 620" role="group" aria-label="Floor plan"></svg>
               <div class="plans__zoom" role="group" aria-label="Zoom">
@@ -129,24 +137,32 @@
               <span>Serra</span><span class="plans__tb-level">Terrace level</span><span class="plans__tb-sheet">Drawing 01 of 02</span>
             </div>
           </div>
-          <aside class="plans__info">
-            <div class="plans__detail" aria-live="polite">
-              <figure class="plans__photo">
-                <button type="button" class="plans__photo-btn"><img alt="" /><span class="sr-only">Open the photographs of this level</span></button>
-                <figcaption class="plans__caption"></figcaption>
-              </figure>
-              <div class="plans__empty" hidden>
-                <svg viewBox="0 0 300 200" aria-hidden="true"></svg>
-                <p>No photograph of this room yet. The drawing shows its size on the plan.</p>
+          <div class="atlas__view">
+            <figure class="atlas__photo">
+              <button type="button" class="atlas__open" tabindex="-1" aria-hidden="true">
+                <img class="atlas__img is-on" alt="" />
+                <img class="atlas__img" alt="" />
+              </button>
+              <div class="atlas__empty" hidden>
+                <div class="atlas__sketch"></div>
+                <p><strong>Photograph not yet available</strong>This room is shown as drawn on the plan, with its measured size.</p>
               </div>
-              <p class="plans__level"></p>
-              <h3 class="plans__room"></h3>
-              <p class="plans__area"></p>
-              <p class="plans__note"></p>
-              <button type="button" class="plans__back" hidden>Back to the full plan</button>
+              <button type="button" class="atlas__detail">View in detail</button>
+              <figcaption class="atlas__caption"></figcaption>
+            </figure>
+            <div class="atlas__info" aria-live="polite">
+              <p class="atlas__meta"><span class="atlas__num">01</span><span class="atlas__level"></span></p>
+              <h3 class="atlas__room"></h3>
+              <p class="atlas__area"></p>
+              <p class="atlas__note"></p>
+              <button type="button" class="atlas__back" hidden>Back to the full plan</button>
             </div>
-            <ol class="plans__list" aria-label="Rooms on this level"></ol>
-          </aside>
+          </div>
+        </div>
+        <div class="atlas__strip">
+          <button type="button" class="atlas__step" data-step="-1" aria-label="Previous room"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M12.5 4.5 7 10l5.5 5.5"/></svg></button>
+          <ol class="atlas__rooms" aria-label="Rooms on this level"></ol>
+          <button type="button" class="atlas__step" data-step="1" aria-label="Next room"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M7.5 4.5 13 10l-5.5 5.5"/></svg></button>
         </div>
       </section>
 
@@ -190,20 +206,22 @@
         <div class="life__head">
           <p class="label"><span class="label__n">06</span>Life at Serra</p>
           <h2 class="headline" data-reveal="lines"><span>Life follows the light</span></h2>
-          <p class="lede" data-reveal="rise">The pool terrace faces the bay, so the light changes the whole house. In the morning the water is clear blue; by evening the travertine turns gold.</p>
+          <p class="lede" data-reveal="rise">The pool terrace faces the bay, so the light changes the whole house. Move the slider to follow the sun from morning to blue hour.</p>
         </div>
-        <div class="compare" style="--pos: 50%">
-          <img class="compare__img" data-src="master" alt="Serra and its pool in the evening sun" loading="lazy" />
-          <div class="compare__clip">
-            <img class="compare__img" data-src="day" alt="Serra and its pool in the morning sun" loading="lazy" />
+        <div class="life__light">
+          <div class="light__frame">
+            <img class="light__img light__img--day" data-src="day" alt="" loading="lazy" />
+            <img class="light__img light__img--gold" data-src="master" alt="Serra and its pool through the day, from morning light to blue hour" loading="lazy" />
+            <img class="light__img light__img--night" data-src="night" alt="" loading="lazy" />
           </div>
-          <span class="compare__label compare__label--am" aria-hidden="true">Morning sun</span>
-          <span class="compare__label compare__label--pm" aria-hidden="true">Evening sun</span>
-          <div class="compare__handle" role="slider" tabindex="0" aria-label="Compare the morning and evening light" aria-valuemin="0" aria-valuemax="100" aria-valuenow="50" aria-valuetext="Half morning sun, half evening sun">
-            <span class="compare__knob" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M9 7 4 12l5 5M15 7l5 5-5 5"/></svg></span>
+          <div class="light__ui">
+            <h3 class="light__title">One view, all day</h3>
+            <p class="light__time" aria-live="polite">19:20, golden hour</p>
+            <label class="sr-only" for="light-range">Time of day</label>
+            <input id="light-range" type="range" min="0" max="100" value="50" step="0.1" />
+            <div class="light__scale" aria-hidden="true"><span>Morning</span><span>Golden hour</span><span>Blue hour</span></div>
           </div>
         </div>
-        <p class="compare__note">Drag across the picture to move from the morning sun to the evening sun. Both views are taken from the same point.</p>
         <div class="life__moments">
           <figure class="life__moment" data-reveal="image-soft">
             <img data-src="kitchen" alt="The kitchen with its travertine island and long oak table" loading="lazy" />

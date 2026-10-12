@@ -31,10 +31,10 @@ export const MEDIA = {
     poster: u('4cc25c34-2537-4b89-b083-2a4d61f2722f', 'jpg'),
     posterMobile: u('9673ec20-6339-4635-8596-275e7d23ce53', 'jpg'),
   },
-  // the walk-through film opens the site (drone artefact over the pool removed at 26.6–27.2 s)
+  // the walk-through film opens the site (stray drone artefacts removed: 21.5–23.5 s on the terrace, 26.6–27.2 s over the pool)
   walk: {
-    desktop: u('13572a40-121b-4be5-83cd-86017e1ac895', 'mp4'),
-    mobile: u('1e45bb3a-5182-432e-9e50-3439a12ad7ff', 'mp4'),
+    desktop: u('a541291c-b778-4cd7-9207-ced4c57997d6', 'mp4'),
+    mobile: u('f357428e-e898-4a2a-8d9d-a44a9b83b27e', 'mp4'),
   },
   making: {
     desktop: u('920dc112-7ef9-471c-9f51-fd7cbc8b81c8', 'mp4'),
