@@ -21,6 +21,11 @@ export const MEDIA = {
   matOak: u('bdf89346-3571-45e6-9bae-a3b3e54fdadd'),
   matLinen: u('bb614efd-c32a-4c80-9f06-6d25fec29c95'),
   matWater: u('5c89cba5-1b82-4d3e-9c89-64c2a016a891'),
+  // the four rooms the film does not pass through, rendered to match the photographs above
+  study: u('a16066d4-7127-4a1d-952a-61825378646d'),
+  suite: u('828c5f91-45d0-4ceb-8894-9ba9c19e4b62'),
+  guest1: u('94c4d7e7-b503-42cf-baa4-fa19c108382d'),
+  guest2: u('f6e99113-e490-4346-828b-cfb2ed1e753a'),
   // frames of the walk-through film, so the stills and the film show the same house
   stair: u('548daae7-d5e5-41e7-86e4-39f5e8c5c442', 'jpg'), // the lit stair from the entrance hall
   pergolaTable: u('4ad3db7c-29f6-4e4d-91fe-8c1b225f5e33'), // the long table under the pergola
@@ -81,8 +86,12 @@ export const MAKING = [
 // Photographs linked to rooms on the plan (keys of MEDIA).
 export const ROOM_PHOTOS = {
   entry: { key: 'stair', name: 'The stair down to the living floor', detail: 'the stair down to the living floor' },
+  study: { key: 'study', name: 'Study, lit from the high strip window' },
+  suite2: { key: 'suite', name: 'Suite, with its door to the pergola terrace' },
   living: { key: 'living', name: 'Living room' },
   kitchen: { key: 'kitchen', name: 'Kitchen and dining' },
+  guest1: { key: 'guest1', name: 'Guest suite, facing the pool and the bay' },
+  guest2: { key: 'guest2', name: 'Guest suite, with its stone shower room' },
   master: { key: 'bedroom', name: 'Master suite' },
   masterbath: { key: 'bath', name: 'Bath' },
   pergola: { key: 'pergola', name: 'Pergola terrace' },
