@@ -33,17 +33,19 @@ export const MEDIA = {
   bay: u('14507a27-9e86-4d3d-af05-2b5861b68389'), // the bay below the pool terrace
   // social sharing preview (1200 x 630)
   og: u('ac0a81d0-b534-4f79-ba93-4a38dbceb0f8', 'jpg'),
-  // aerial film for the location chapter: flies in and settles on the villa (plays once, no loop)
+  // aerial film for the location chapter: flies in and settles on the villa (plays once, no loop).
+  // Upscaled to 4K, then 2560x1440 for screens and a vertical 1080x1920 crop for phones.
   hero: {
-    desktop: u('4090c74f-a5d0-444b-8802-6da67ca87fd6', 'mp4'),
-    mobile: u('b17078c7-f1e2-412a-9234-4926ca6f18aa', 'mp4'),
-    poster: u('4cc25c34-2537-4b89-b083-2a4d61f2722f', 'jpg'),
-    posterMobile: u('9673ec20-6339-4635-8596-275e7d23ce53', 'jpg'),
+    desktop: u('4040a52c-871d-43d6-bf4e-302bae1067fb', 'mp4'),
+    mobile: u('f679d43e-dce1-4be3-9e12-38fbad836fe8', 'mp4'),
+    poster: u('0ac53079-9df5-4158-a8a5-5a96c69db668', 'jpg'),
+    posterMobile: u('397c5737-78cb-4dc2-a811-596696bc44f8', 'jpg'),
   },
-  // the walk-through film opens the site (stray drone artefacts removed: 21.5–23.5 s on the terrace, 26.6–27.2 s over the pool)
+  // the walk-through film opens the site (stray drone artefacts removed: 21.5–23.5 s on the terrace, 26.6–27.2 s over the pool).
+  // Upscaled to 4K, then 2560x1440 for screens and a vertical 1080x1920 crop for phones.
   walk: {
-    desktop: u('a541291c-b778-4cd7-9207-ced4c57997d6', 'mp4'),
-    mobile: u('f357428e-e898-4a2a-8d9d-a44a9b83b27e', 'mp4'),
+    desktop: u('bdb7c7e6-bba1-4eb1-86c3-59fb50b294f8', 'mp4'),
+    mobile: u('cd7a7b44-98ea-4a7f-8aa7-45c150ffeead', 'mp4'),
   },
   // construction visualisation (letterbox removed; 1440 px for desktop, 960 px for phones)
   making: {
